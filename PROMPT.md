@@ -1,0 +1,3 @@
+# Ready-to-run agent prompt
+
+> 进入 `tmzncty/protocol-zoo` 后，先读 `AGENTS.md`、`README.md`、`ROADMAP.md`、`IMPLEMENTATION_PLAN.md` 和相关 `docs/`，再检查当前 git 状态与已有 species/lab。不要重新做宏观规划，从 `IMPLEMENTATION_PLAN.md` 中依赖已满足的最早未完成任务开始直接施工。以可重复实验为完成单位，优先复用成熟 server/client、系统工具、Wireshark/tshark/Scapy，不要为了代码量重写已有协议实现。所有旧式明文/弱认证协议默认只在 loopback/netns/veth 中实验，禁止把服务暴露公网、禁止扫描第三方、禁止提交真实凭据或私人抓包。每个实验尽量留下脚本、结构化结果、可追溯 capture、逐字段解释和权威规范来源；外部 pcap 许可不清时不要提交二进制副本。每完成一个可靠闭环就验证 cleanup、安全边界和文档，再提交 checkpoint，然后继续下一项。除非遇到规范缺失、许可、安全或环境上的真正 blocker，否则不要停下来等确认。最终只汇报完成的 exhibit/实验、实际运行结果、capture/来源、commit、剩余下一任务和 blocker。
