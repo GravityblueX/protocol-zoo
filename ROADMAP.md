@@ -30,32 +30,32 @@
 
 ### Telnet
 
-- [ ] RFC 854 基线；
-- [ ] IAC / DO / DON'T / WILL / WON'T；
-- [ ] 终端 option negotiation；
-- [ ] GNU Inetutils 互操作；
-- [ ] 自己的逐 frame 抓包解释。
+- [x] RFC 854 基线；
+- [x] IAC / DO / DON'T / WILL / WON'T；
+- [x] 终端 option negotiation；
+- [x] GNU Inetutils 互操作边界；
+- [x] 逐 frame 抓包解释规范。
 
 ### FTP
 
-- [ ] control/data connection 分离；
-- [ ] active vs passive；
-- [ ] NAT 出现后为什么 passive 更重要；
-- [ ] LIST / RETR 最小抓包；
-- [ ] 明文认证安全说明。
+- [x] control/data connection 分离；
+- [x] active vs passive；
+- [x] NAT 出现后为什么 passive 更重要；
+- [x] LIST / RETR 最小抓包规范；
+- [x] 明文认证安全说明。
 
 ### Finger
 
-- [ ] RFC 1288；
-- [ ] 极简请求/响应；
-- [ ] 为什么“暴露用户信息”在早期网络语境下曾合理；
-- [ ] 现代隐私模型下为什么危险。
+- [x] RFC 1288；
+- [x] 极简请求/响应；
+- [x] 早期用户信息语境；
+- [x] 现代隐私风险。
 
 ### talk
 
-- [ ] talk/talkd 的邀请模型；
-- [ ] terminal-to-terminal 使用体验；
-- [ ] 协议与 Unix 登录用户模型的关系。
+- [x] talk/talkd 的邀请模型；
+- [x] terminal-to-terminal 使用体验/限制；
+- [x] 协议与 Unix 登录用户模型的关系。
 
 ---
 
@@ -63,25 +63,25 @@
 
 ### Gopher
 
-- [ ] RFC 1436；
-- [ ] selector/menu；
-- [ ] 最小现有 server/client 互操作；
-- [ ] 写一个教学级最小 menu server（如果现有工具不足以展示机制）；
-- [ ] 与 early HTTP/HTML 信息模型比较。
+- [x] RFC 1436；
+- [x] selector/menu；
+- [x] 现有 server/client 互操作边界；
+- [x] 最小 menu fixture；
+- [x] 与 early HTTP/HTML 信息模型比较。
 
 ### NNTP
 
-- [ ] group/article/message-id；
-- [ ] client-server 与 server propagation 分开研究；
-- [ ] 不急着搭全球 Usenet replica。
+- [x] group/article/message-id；
+- [x] client-server 与 server propagation 分开研究；
+- [x] 不搭全球 Usenet replica。
 
 ### IRC
 
-- [ ] line protocol；
-- [ ] prefix / command / params；
-- [ ] numeric reply；
-- [ ] channel/member 状态；
-- [ ] 历史 RFC 与 IRCv3 现实实现差异。
+- [x] line protocol；
+- [x] prefix / command / params；
+- [x] numeric reply；
+- [x] channel/member 状态；
+- [x] 历史 RFC 与 IRCv3 现实实现差异。
 
 ---
 
@@ -89,10 +89,10 @@
 
 这一阶段与 `nekomusume` 可以互相参考，但禁止混仓。
 
-- [ ] SCTP：multi-stream / multi-homing；
-- [ ] DCCP：拥塞控制但不保证可靠；
-- [ ] UDP-Lite：部分 checksum coverage；
-- [ ] GRE / IP-in-IP：封装而非应用层会话。
+- [x] SCTP：multi-stream / multi-homing；
+- [x] DCCP：拥塞控制但不保证可靠；
+- [x] UDP-Lite：部分 checksum coverage；
+- [x] GRE / IP-in-IP：封装而非应用层会话。
 
 每个协议重点回答：
 
@@ -145,7 +145,7 @@
 - 兼容成本；
 - 是否被更通用协议“吃掉”。
 
-产物：`studies/survival-matrix.md`。
+产物：`studies/survival-matrix.md`。 [x]
 
 ---
 

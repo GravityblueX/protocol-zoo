@@ -1,0 +1,14 @@
+name,layer,original_spec,current_spec,status,existing_implementation,wireshark_dissector,scapy_layer,deployment_difficulty,security_model
+Telnet,application,RFC 854,RFC 854,legacy/unsafe,inetutils-telnet,telnet,TELNET,low,plaintext
+FTP,application,RFC 959,RFC 959 + RFC 2428,legacy/unsafe,inetutils-ftp,ftp/ftp-data,FTP,medium,plaintext control and data
+Finger,application,RFC 1288,RFC 1288,obsolete,inetutils-finger,finger,Finger,low,public user metadata
+Talk,application,BSD talk protocol,historical BSD docs,obsolete,talk/talkd implementations,talk,Talk,high,host/user trust
+Gopher,application,RFC 1436,RFC 1436,legacy/community,pygopherd and small servers,gopher,Gopher,low,server-defined content
+NNTP,application,RFC 977,RFC 3977,legacy,INN and leafnode,nntp,NNTP,medium,server trust/auth varies
+IRC,application,RFC 1459,IRCv3 specifications,alive/evolved,InspIRCd/Ergo,irc,IRC,medium,operator/channel trust
+SCTP,transport,RFC 4960,RFC 9260,specialized,Linux lksctp,sctp,SCTP,high,association and app security
+DCCP,transport,RFC 4340,RFC 4340,specialized,Linux kernel,dccp,DCCP,high,congestion control not confidentiality
+UDP-Lite,transport,RFC 3828,RFC 3828,specialized,Linux kernel,udplite,UDPLite,medium,application integrity partial
+GRE,network,RFC 2784,RFC 2890,specialized,Linux iproute2,gre,GRE,high,none without outer security
+IP-in-IP,network,RFC 2003,RFC 2003,specialized,Linux iproute2,ip,IP,high,none without outer security
+AppleTalk,network,historical AppleTalk docs,AppleTalk docs,obsolete,legacy Apple/BSD stacks,aarp/ddp/atp,AppleTalk,very high,legacy trust/broadcast

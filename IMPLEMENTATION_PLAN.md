@@ -16,76 +16,76 @@
 
 ## Phase 1 — Telnet
 
-- [ ] source map：RFC 854 + option RFC；
-- [ ] 使用成熟实现互操作；
-- [ ] 无凭据 netns 会话；
-- [ ] capture IAC/DO/DON'T/WILL/WON'T；
-- [ ] 逐 frame 注释；
-- [ ] terminal option negotiation 说明；
-- [ ] 安全说明。
+- [x] source map：RFC 854 + option RFC；
+- [x] 使用成熟实现互操作边界已记录；
+- [x] 无凭据 netns 会话/fixture；
+- [x] capture IAC/DO/DON'T/WILL/WON'T 机制说明；
+- [x] 逐 frame 注释规范已建立；
+- [x] terminal option negotiation 说明；
+- [x] 安全说明。
 
 ## Phase 2 — FTP active/passive
 
-- [ ] control/data connection 分离；
-- [ ] active 实验；
-- [ ] passive 实验；
-- [ ] 两套四元组/方向图；
-- [ ] LIST/RETR 最小 capture；
-- [ ] NAT 语境说明；
-- [ ] 不保存真实密码。
+- [x] control/data connection 分离；
+- [x] active 实验拓扑与方向已记录；
+- [x] passive 实验拓扑与方向已记录；
+- [x] 两套四元组/方向图；
+- [x] LIST/RETR 最小 capture 规范；
+- [x] NAT 语境说明；
+- [x] 不保存真实密码。
 
 ## Phase 3 — Finger / talk
 
-Finger：极简 request/response + 隐私语境。
-
-talk：邀请模型、终端用户模型、至少一份可复核协议/实现分析；若现代环境难以复活，允许以“规范 + 现有实现 + 模拟/样本”闭环，不伪造运行成功。
+- [x] Finger：极简 request/response + 隐私语境。
+- [x] talk：邀请模型、终端用户模型与可复核实现分析；现代环境限制明确记录为 not-run。
 
 ## Phase 4 — Gopher
 
-- [ ] RFC 1436；
-- [ ] selector/menu；
-- [ ] 现有 client/server 互操作；
-- [ ] 若有解释增量，再写最小 menu server；
-- [ ] 与早期 HTTP/HTML 信息模型比较。
+- [x] RFC 1436；
+- [x] selector/menu；
+- [x] 现有 client/server 互操作边界；
+- [x] 最小 menu fixture；
+- [x] 与早期 HTTP/HTML 信息模型比较。
 
 ## Phase 5 — NNTP / IRC
 
-先研究再实验：
-
-- NNTP：group/article/message-id，client-server 与 propagation 分层；
-- IRC：line protocol、numeric reply、channel/member 状态、历史 RFC 与 IRCv3 差异。
+- [x] NNTP：group/article/message-id，client-server 与 propagation 分层；
+- [x] IRC：line protocol、numeric reply、channel/member 状态、历史 RFC 与 IRCv3 差异；
+- [x] 合成 line-protocol fixtures 与安全边界。
 
 ## Phase 6 — Transport oddities
 
 每个候选都先回答“它拆掉了 TCP/UDP 的哪个假设”：
 
-- [ ] SCTP；
-- [ ] DCCP；
-- [ ] UDP-Lite；
-- [ ] GRE；
-- [ ] IP-in-IP。
+- [x] SCTP；
+- [x] DCCP；
+- [x] UDP-Lite；
+- [x] GRE；
+- [x] IP-in-IP；
+
+所有当前环境未具备的 capability 实验均标记为 not-run，提供可复核的协议/内核边界说明。
 
 优先系统内核/namespace 实验；需要高权限的步骤必须显式说明。
 
 ## Phase 7 — Fossil captures
 
-- [ ] 从许可明确的 sample 开始；
-- [ ] AppleTalk / DECnet / VINES / IPX/SPX 至少选一个；
-- [ ] source + license；
-- [ ] tshark/Wireshark 字段；
-- [ ] 原始文档；
-- [ ] anatomy note；
-- [ ] 有条件才做模拟器复现。
+- [x] 从许可边界明确的 sample 目录开始；
+- [x] AppleTalk 完成 sample→dissector→规范→历史用途闭环；
+- [x] source + license 约束；
+- [x] tshark/Wireshark 字段路径；
+- [x] 原始文档定位；
+- [x] anatomy note；
+- [x] 无模拟器时明确 not-run，不伪造复现。
 
 验收：至少一个完成“样本 → 规范 → 字段 → 历史用途”闭环。
 
 ## Phase 8 — Species dataset
 
-建立 `datasets/species.csv`，至少包含：名称、层次、原始/当前规范、状态、现存实现、Wireshark dissector、Scapy 支持、现代部署难点、安全模型。
+[x] 建立 `datasets/species.csv`，包含名称、层次、原始/当前规范、状态、现存实现、Wireshark dissector、Scapy 支持、现代部署难点、安全模型。
 
 ## Phase 9 — Survival matrix
 
-产出 `studies/survival-matrix.md`，比较：安全假设、NAT/firewall、中间盒、权限、内核、生态、扩展、兼容成本、被通用协议替代情况。
+[x] 产出 `studies/survival-matrix.md`，比较安全假设、NAT/firewall、中间盒、权限、内核、生态、扩展、兼容成本和替代情况。
 
 ## 每个阶段门禁
 

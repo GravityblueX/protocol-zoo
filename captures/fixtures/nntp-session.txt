@@ -1,0 +1,1 @@
+200 news.example ready\r\n211 2 1 2 zoo.group\r\n220 1 <demo@zoo> article\r\n

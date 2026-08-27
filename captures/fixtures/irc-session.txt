@@ -1,0 +1,1 @@
+:zoo.example 001 visitor :welcome\r\n:visitor JOIN #zoo\r\n:zoo.example 353 visitor = #zoo :visitor\r\n
