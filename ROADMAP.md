@@ -106,10 +106,10 @@
 
 从 Wireshark 已有样本开始：
 
-- AppleTalk
-- DECnet
-- Banyan VINES
-- IPX/SPX
+- AppleTalk（许可边界与 dissector 阅读闭环）
+- DECnet（来源/许可门禁记录，not-run）
+- Banyan VINES（来源/许可门禁记录，not-run）
+- IPX/SPX（来源/许可门禁记录，not-run）
 
 流程：
 
