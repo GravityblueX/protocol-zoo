@@ -1,0 +1,11 @@
+{
+  "protocol": "dummy-tcp",
+  "experiment": "phase-0-netns-harness",
+  "environment": {"os": "linux", "kernel": "6.8.0-137-generic", "topology": "netns-veth", "tools": {"tcpdump": "tcpdump version 4.99.4", "tshark": "TShark (Wireshark) 4.2.2 (Git v4.2.2 packaged as 4.2.2-1.1build3)."}},
+  "capture_point": "pz-server:pz-veth-s",
+  "command": "scripts/dummy-capture.sh",
+  "capture_filter": "tcp port 18080",
+  "result": {"handshake": "pass", "capture": "captures/dummy-tcp-netns.pcapng", "frames": 9},
+  "sanitized": true,
+  "notes": ["Fixed documentation-range addresses and synthetic payload only."]
+}

@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/tmzncty/protocol-zoo/schema/experiment.schema.json",
+  "title": "Protocol Zoo experiment result",
+  "type": "object",
+  "required": ["protocol", "environment", "result", "notes"],
+  "properties": {
+    "protocol": {"type": "string", "minLength": 1},
+    "experiment": {"type": "string", "minLength": 1},
+    "environment": {"type": "object", "required": ["os", "kernel", "topology"], "properties": {"os": {"type": "string"}, "kernel": {"type": "string"}, "topology": {"type": "string"}, "tools": {"type": "object", "additionalProperties": {"type": "string"}}}, "additionalProperties": true},
+    "capture_point": {"type": "string"},
+    "command": {"type": "string"},
+    "capture_filter": {"type": "string"},
+    "result": {"type": "object", "required": ["handshake", "capture"], "properties": {"handshake": {"enum": ["pass", "fail", "not_run"]}, "capture": {"type": "string"}, "frames": {"type": "integer", "minimum": 0}}, "additionalProperties": true},
+    "sanitized": {"type": "boolean"},
+    "notes": {"type": "array", "items": {"type": "string"}}
+  },
+  "additionalProperties": false
+}

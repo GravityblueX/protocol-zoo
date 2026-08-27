@@ -6,11 +6,11 @@
 
 先做共用实验基础：
 
-- [ ] `docs/LAB-SAFETY.md`：旧协议安全边界；
-- [ ] `docs/CAPTURE-CONVENTION.md`：pcapng 命名、脱敏、frame 引用；
-- [ ] `scripts/lab-netns.sh`：创建两端 veth/netns 的最小实验网络；
-- [ ] `schemas/experiment.schema.json`；
-- [ ] `species/_template/` 标准展品模板。
+- [x] `docs/LAB-SAFETY.md`：旧协议安全边界；
+- [x] `docs/CAPTURE-CONVENTION.md`：pcapng 命名、脱敏、frame 引用；
+- [x] `scripts/lab-netns.sh`：创建两端 veth/netns 的最小实验网络；
+- [x] `schemas/experiment.schema.json`；
+- [x] `species/_template/` 标准展品模板。
 
 ### M0 验收
 

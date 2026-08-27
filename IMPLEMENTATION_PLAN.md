@@ -4,13 +4,13 @@
 
 ## Phase 0 — Lab harness
 
-- [ ] `docs/LAB-SAFETY.md`；
-- [ ] `docs/CAPTURE-CONVENTION.md`；
-- [ ] `scripts/lab-netns.sh`；
-- [ ] `schemas/experiment.schema.json`；
-- [ ] `species/_template/`；
-- [ ] teardown/cleanup test；
-- [ ] 一份最小 TCP/UDP dummy capture 证明 harness 可用。
+- [x] `docs/LAB-SAFETY.md`；
+- [x] `docs/CAPTURE-CONVENTION.md`；
+- [x] `scripts/lab-netns.sh`；
+- [x] `schemas/experiment.schema.json`；
+- [x] `species/_template/`；
+- [x] teardown/cleanup test；
+- [x] 一份最小 TCP/UDP dummy capture 证明 harness 可用。
 
 验收：干净 Linux 环境可创建隔离网络、运行两端、抓包、生成结构化结果、清理，不触碰公网接口。
 
