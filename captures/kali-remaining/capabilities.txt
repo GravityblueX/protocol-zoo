@@ -1,0 +1,5 @@
+kernel=6.19.14+kali-amd64
+udplite_socket=pass
+dccp_socket=not_supported:93
+gre_tunnel=pass
+ipip_tunnel=pass

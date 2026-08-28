@@ -1,0 +1,11 @@
+{
+  "protocol": "udp-lite+gre+ip-in-ip+dccp",
+  "experiment": "phase-6-remaining-kali-netns",
+  "environment": {"os": "kali", "kernel": "6.19.14+kali-amd64", "topology": "nested-netns-veth", "tools": {"iproute2": "7.0.0-1", "tcpdump": "4.99.6", "tshark": "4.6.6"}},
+  "capture_point": "guest pz-b:pz-vb",
+  "command": "scripts/kali-remaining-capture.sh",
+  "capture_filter": "ip proto 136; proto 47; proto 4",
+  "result": {"handshake": "pass", "capture": "captures/kali-remaining/{udplite,gre,ipip}.pcapng", "frames": 10, "udplite": {"handshake": "pass", "frames": 2, "checksum_coverage": [28, 39]}, "gre": {"handshake": "pass", "frames": 4, "outer_protocol": 47, "inner_protocol": "icmp"}, "ip_in_ip": {"handshake": "pass", "frames": 4, "outer_protocol": 4, "inner_protocol": "icmp"}, "dccp": {"handshake": "not_run", "socket_errno": 93, "reason": "Protocol not supported; no DCCP module in Kali guest kernel"}},
+  "sanitized": true,
+  "notes": ["All packets used synthetic payloads and 198.18.0.0/15 documentation addresses inside nested namespaces.", "UDP-Lite used protocol 136 and Wireshark udp.checksum_coverage values 28 and 39; GRE and IP-in-IP captures show outer encapsulation plus inner ICMP.", "DCCP absence is recorded as capability evidence, not a failed implementation claim."]
+}

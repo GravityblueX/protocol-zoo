@@ -1,4 +1,4 @@
-.PHONY: validate fixtures capture real-app sctp capabilities experiment clean
+.PHONY: validate fixtures capture real-app sctp remaining capabilities experiment clean
 validate:
 	./scripts/experiment.sh validate
 fixtures:
@@ -9,6 +9,8 @@ real-app:
 	./scripts/experiment.sh real-app
 sctp:
 	./scripts/experiment.sh sctp
+remaining:
+	./scripts/experiment.sh remaining
 capabilities:
 	./scripts/experiment.sh capabilities
 experiment:
