@@ -12,7 +12,7 @@
 |---|---|---|
 | Unix 经典协议 | [Telnet](species/telnet/)、[FTP](species/ftp/)、[Finger](species/finger/)、[talk](species/talk/) | 文档、机制 fixture、隔离边界完成 |
 | 另类信息空间 | [Gopher](species/gopher/)、[NNTP](species/nntp/)、[IRC](species/irc/) | 文档与合成 line/menu fixture 完成 |
-| 传输设计异类 | [SCTP](species/sctp/)、[DCCP](species/dccp/)、[UDP-Lite](species/udp-lite/)、[GRE](species/gre/)、[IP-in-IP](species/ip-in-ip/) | 规范、设计分析与权限/部署边界完成 |
+| 传输设计异类 | [SCTP](species/sctp/)、[DCCP](species/dccp/)、[UDP-Lite](species/udp-lite/)、[GRE](species/gre/)、[IP-in-IP](species/ip-in-ip/) | SCTP 已在独立 Kali nested-netns 实测，其余保留 capability/not-run |
 | 化石抓包馆 | [AppleTalk](species/appletalk/)；DECnet/VINES/IPX/SPX | AppleTalk 阅读闭环完成，其余遵守样本许可门禁并标记 `not-run` |
 
 完整索引见 [`docs/EXHIBITS.md`](docs/EXHIBITS.md)。
