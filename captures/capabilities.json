@@ -1,0 +1,32 @@
+{
+  "protocol": "capability-report",
+  "experiment": "phase-6-kernel-capability-observation",
+  "environment": {
+    "os": "linux",
+    "kernel": "6.8.0-137-generic",
+    "topology": "host-observation",
+    "tools": {
+      "ip": "ip utility, iproute2-6.1.0, libbpf 1.3.0",
+      "tshark": "TShark (Wireshark) 4.2.2 (Git v4.2.2 packaged as 4.2.2-1.1build3)."
+    }
+  },
+  "result": {
+    "handshake": "not_run",
+    "capture": "none",
+    "frames": 0,
+    "capabilities": {
+      "iproute2": true,
+      "tshark": true,
+      "proc_net_protocols": {
+        "sctp": false,
+        "dccp": false,
+        "udplite": false
+      }
+    }
+  },
+  "sanitized": true,
+  "notes": [
+    "Observation only: no module loading, namespace creation, route changes, or network peers.",
+    "not_run is intentional; a real transport experiment requires explicit CAP_NET_ADMIN and an implementation/API test."
+  ]
+}

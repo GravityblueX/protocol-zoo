@@ -8,6 +8,11 @@ jq empty schemas/experiment.schema.json
 jsonschema -i captures/dummy-tcp-netns.json schemas/experiment.schema.json
 [ "$(jq -r '.result.handshake' captures/dummy-tcp-netns.json)" = pass ]
 [ "$(jq -r '.sanitized' captures/dummy-tcp-netns.json)" = true ]
+if [ -f captures/capabilities.json ]; then
+  jsonschema -i captures/capabilities.json schemas/experiment.schema.json
+  [ "$(jq -r '.result.handshake' captures/capabilities.json)" = not_run ]
+  [ "$(jq -r '.sanitized' captures/capabilities.json)" = true ]
+fi
 command -v tshark >/dev/null && tshark -r captures/dummy-tcp-netns.pcapng >/dev/null
 ! ip netns list | grep -q '^pz-' || { echo 'namespace residue' >&2; exit 1; }
 git diff --check

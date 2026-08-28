@@ -5,7 +5,7 @@
   "capture_point": "pz-server:pz-veth-s",
   "command": "scripts/dummy-capture.sh",
   "capture_filter": "tcp port 18080",
-  "result": {"handshake": "pass", "capture": "captures/dummy-tcp-netns.pcapng", "frames": 9},
+  "result": {"handshake": "pass", "capture": "captures/dummy-tcp-netns.pcapng", "frames": 11},
   "sanitized": true,
   "notes": ["Fixed documentation-range addresses and synthetic payload only."]
 }

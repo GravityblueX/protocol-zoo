@@ -22,20 +22,24 @@
 需要 Linux、`ip`、`tcpdump`、`tshark`、`jq`、`jsonschema`、`nc`，并需要 root/CAP_NET_ADMIN 才能建立 namespace：
 
 ```sh
-# 生成合成协议 fixtures
-./scripts/make-fixtures.sh
+# 统一入口：生成合成协议 fixtures
+./scripts/experiment.sh fixtures
+
+# 观察当前内核/工具能力（不加载模块、不改网络）
+./scripts/experiment.sh capabilities
 
 # 校验 schema、pcapng、脱敏标记、namespace cleanup 和 git diff
-./scripts/validate-repo.sh
+./scripts/experiment.sh validate
 
-# 运行隔离 TCP capture（需要 sudo）
-sudo ./scripts/dummy-capture.sh
+# 运行隔离 TCP capture（需要 sudo/CAP_NET_ADMIN）
+./scripts/experiment.sh capture
 ```
 
 也可以使用：
 
 ```sh
 make fixtures
+make capabilities
 make validate
 make capture
 make clean

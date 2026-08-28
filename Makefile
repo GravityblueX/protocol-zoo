@@ -1,9 +1,13 @@
-.PHONY: validate fixtures capture clean
+.PHONY: validate fixtures capture capabilities experiment clean
 validate:
-	./scripts/validate-repo.sh
+	./scripts/experiment.sh validate
 fixtures:
-	./scripts/make-fixtures.sh
+	./scripts/experiment.sh fixtures
 capture:
-	sudo ./scripts/dummy-capture.sh
+	./scripts/experiment.sh capture
+capabilities:
+	./scripts/experiment.sh capabilities
+experiment:
+	@./scripts/experiment.sh
 clean:
-	sudo ./scripts/lab-netns.sh teardown
+	./scripts/experiment.sh clean
