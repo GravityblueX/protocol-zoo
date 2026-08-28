@@ -1,0 +1,15 @@
+Connected to 198.18.0.2.
+220 pyftpdlib 1.5.9 ready.
+331 Username ok, send password.
+230 Login successful.
+Remote system type is UNIX.
+Using binary mode to transfer files.
+Passive mode: off; fallback to active mode: off.
+Passive mode: on; fallback to active mode: on.
+?Invalid command.
+local: /tmp/pz-ftp-retrieved remote: readme.txt
+229 Entering extended passive mode (|||19000|).
+125 Data connection already open. Transfer starting.
+226 Transfer complete.
+25 bytes received in 00:00 (189.25 KiB/s)
+221 Goodbye.

@@ -4,20 +4,22 @@ set -eu
 ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
 usage() {
   cat >&2 <<'EOF'
-usage: scripts/experiment.sh {fixtures|validate|capture|capabilities|clean}
+usage: scripts/experiment.sh {fixtures|validate|capture|real-app|capabilities|clean}
   fixtures       regenerate synthetic protocol fixtures (no network)
   validate       validate schema, captures, fixtures and cleanup state
   capture        run the isolated dummy TCP capture (needs sudo/CAP_NET_ADMIN)
+  real-app       run mature Telnet/FTP implementations in netns
   capabilities   record observational kernel/tool capability evidence
   clean          teardown Protocol Zoo namespaces
 EOF
   exit 2
 }
-[ "$#" -eq 1 ] || usage
+[ "$#" -ge 1 ] && [ "$#" -le 2 ] || usage
 case "$1" in
   fixtures) exec "$ROOT/scripts/make-fixtures.sh" ;;
   validate) exec "$ROOT/scripts/validate-repo.sh" ;;
   capture) exec sudo "$ROOT/scripts/dummy-capture.sh" ;;
+  real-app) exec sudo "$ROOT/scripts/real-app-capture.sh" "${2:-captures/real-app-netns}" ;;
   capabilities) exec "$ROOT/scripts/capability-report.sh" ;;
   clean) exec sudo "$ROOT/scripts/lab-netns.sh" teardown ;;
   *) usage ;;

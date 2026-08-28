@@ -10,7 +10,7 @@
 
 ## 实验记录
 
-本 exhibit 的安全复现采用 netns 拓扑 fixture：为 control 与 data 分别记录四元组、发起方向、`LIST`/`RETR` 顺序；没有公网服务器，也不保存密码。抓包应过滤 control port 与 data range，并将认证字段视为合成凭据后再提交。
+`scripts/real-app-capture.sh` 使用 `pyftpdlib 1.5.9` 在 `pz-server` 的 `198.18.0.2:2121` 启动成熟 FTP 服务，`pz-client` 使用系统 `ftp` 客户端完成登录、EPSV 被动数据连接和 `RETR`；结果见 `captures/real-app-netns/ftp.pcapng`、`ftp.frames.tsv` 与两个脱敏 transcript。control 与 data 四元组、`USER/PASS`、`230`、`EPSV/229`、`RETR/125/226` 均可由抓包复核。实验只使用合成账号和文件，不连接公网。
 
 ## 安全
 
