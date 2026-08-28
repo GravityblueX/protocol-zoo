@@ -12,7 +12,7 @@
 |---|---|---|
 | Unix 经典协议 | [Telnet](species/telnet/)、[FTP](species/ftp/)、[Finger](species/finger/)、[talk](species/talk/) | 文档、机制 fixture、隔离边界完成 |
 | 另类信息空间 | [Gopher](species/gopher/)、[NNTP](species/nntp/)、[IRC](species/irc/) | 文档与合成 line/menu fixture 完成 |
-| 传输设计异类 | [SCTP](species/sctp/)、[DCCP](species/dccp/)、[UDP-Lite](species/udp-lite/)、[GRE](species/gre/)、[IP-in-IP](species/ip-in-ip/) | SCTP 已在独立 Kali nested-netns 实测，其余保留 capability/not-run |
+| 传输设计异类 | [SCTP](species/sctp/)、[DCCP](species/dccp/)、[UDP-Lite](species/udp-lite/)、[GRE](species/gre/)、[IP-in-IP](species/ip-in-ip/) | SCTP、UDP-Lite、GRE、IP-in-IP 已在独立 Kali nested-netns 实测；DCCP 保留 capability/not-run |
 | 化石抓包馆 | [AppleTalk](species/appletalk/)；DECnet/VINES/IPX/SPX | AppleTalk 阅读闭环完成，其余遵守样本许可门禁并标记 `not-run` |
 
 完整索引见 [`docs/EXHIBITS.md`](docs/EXHIBITS.md)。
@@ -43,6 +43,9 @@ make capabilities
 make validate
 make capture
 make clean
+
+# 一次性重生成、能力观测并校验
+make check
 ```
 
 生成的示例证据：
@@ -92,3 +95,4 @@ studies/                  协议存亡比较矩阵
 - [`datasets/species.csv`](datasets/species.csv)：协议数据集
 - [`studies/survival-matrix.md`](studies/survival-matrix.md)：为什么死 / 为什么活
 - [`docs/COLOPHON.md`](docs/COLOPHON.md)：署名与资料归属
+- [`docs/KALI-LAB.md`](docs/KALI-LAB.md)：独立 Kali guest、网络边界与复现入口
