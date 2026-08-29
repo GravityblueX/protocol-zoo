@@ -1,0 +1,6 @@
+PING 198.18.240.6 (198.18.240.6) 1372(1400) bytes of data.
+1380 bytes from 198.18.240.6: icmp_seq=1 ttl=63 time=0.094 ms
+
+--- 198.18.240.6 ping statistics ---
+1 packets transmitted, 1 received, 0% packet loss, time 0ms
+rtt min/avg/max/mdev = 0.094/0.094/0.094/0.000 ms

@@ -1,0 +1,2 @@
+198.18.240.6 via 198.18.240.1 dev pc src 198.18.240.2 uid 0 
+    cache expires 599sec mtu 1400 
