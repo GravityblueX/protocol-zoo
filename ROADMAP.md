@@ -216,7 +216,7 @@
 ## M14 — PC 局域网生态：NetBIOS / NBNS / SMB / IPX
 
 - [x] RFC 1001/1002 与 B/P/M node 模型研究；
-- [ ] Samba/NBNS namespace 实测；
+- [x] Samba/NBNS namespace 实测；
 - [x] IPX/DECnet/VINES 许可与内核门禁。
 
 ## M15 — IPv6 过渡墓园

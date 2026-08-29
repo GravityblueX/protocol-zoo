@@ -1,0 +1,12 @@
+{
+  "protocol":"nbns",
+  "experiment":"m14-netbios-nbns-netns",
+  "evidence_level":"real-capture",
+  "environment":{"os":"kali","kernel":"6.19.14+kali-amd64","topology":"nested private netns-veth","tools":{"nmbd":"Samba 4.24.3","nmblookup":"Samba 4.24.3","tshark":"TShark 4.6.6"}},
+  "capture_point":"guest pz-nbns-b:pz-nbns-vb",
+  "command":"guest Samba nmbd + nmblookup -B",
+  "capture_filter":"udp port 137 or udp port 138",
+  "result":{"handshake":"pass","capture":"captures/era2-netbios/nbns.pcapng","frames":19,"query":"ZOOSRV","broadcast":"198.18.150.255","name_service":"NBNS","datagram_service":"NBDS"},
+  "sanitized":true,
+  "notes":["Samba nmbd and nmblookup ran in nested namespaces; no host broadcast domain was used.","The capture includes NBNS traffic and an NBDS/SMB mailslot announcement; the queried synthetic name intentionally demonstrates broadcast name resolution boundary."]
+}

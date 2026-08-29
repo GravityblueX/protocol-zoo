@@ -49,4 +49,12 @@ tshark -r captures/era2-network/icmp-lifecycle.pcapng -Y 'icmp.type == 0' -T fie
 tshark -r captures/era2-network/icmp-lifecycle.pcapng -Y 'icmp.type == 3 && icmp.code == 3' -T fields -e frame.number 2>/dev/null | grep -q .
 tshark -r captures/era2-network/igmp-membership.pcapng -Y 'igmp' -T fields -e frame.number 2>/dev/null | grep -q .
 
+NBNSJ=captures/era2-netbios/nbns.json
+NBNSP=captures/era2-netbios/nbns.pcapng
+[ -s "$NBNSJ" ] && [ -s "$NBNSP" ]
+jsonschema -i "$NBNSJ" schemas/experiment.schema.json
+[ "$(jq -r '.evidence_level' "$NBNSJ")" = real-capture ]
+[ "$(jq -r '.result.frames' "$NBNSJ")" -eq "$(tshark -r "$NBNSP" -T fields -e frame.number 2>/dev/null | wc -l)" ]
+tshark -r "$NBNSP" -Y 'nbns' -T fields -e frame.number 2>/dev/null | grep -q .
+
 echo 'second-era validation: pass'
