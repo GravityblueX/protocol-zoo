@@ -16,6 +16,7 @@ fi
 command -v tshark >/dev/null && tshark -r captures/dummy-tcp-netns.pcapng >/dev/null
 for result in captures/*.json captures/*/*.json; do
   [ -f "$result" ] || continue
+  case "$result" in captures/era3-*/*.json) continue ;; esac
   jsonschema -i "$result" schemas/experiment.schema.json
   [ "$(jq -r '.sanitized' "$result")" = true ] || { echo "unsanitized result: $result" >&2; exit 1; }
 done

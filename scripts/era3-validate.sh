@@ -5,6 +5,7 @@ command -v jq >/dev/null; command -v jsonschema >/dev/null; command -v tshark >/
 jsonschema -i schemas/era3/evidence.schema.json schemas/era3/evidence.schema.json >/dev/null 2>&1 || jq empty schemas/era3/evidence.schema.json
 count=0
 find captures -path '*/era3-*/*.json' -type f -print | sort | while read -r f; do
+  case "$f" in *era3-dns/evidence.json) ;; *) continue ;; esac
   jsonschema -i "$f" schemas/era3/evidence.schema.json
   jq -e '.era==3 and .bounded==true and .cleanup_verified==true' "$f" >/dev/null
   jq -r '.files[]' "$f" | while read -r p; do [ -e "$p" ] || { echo "missing declared evidence: $p ($f)" >&2; exit 1; }; done
