@@ -211,7 +211,7 @@
 
 - [x] Echo、Unreachable、Redirect、Source Quench、Time Exceeded 的生命周期研究；
 - [x] RFC 6633 Source Quench 废弃证据与 synthetic fixture；
-- [ ] 私有 namespace 中 ICMP error/redirect 行为抓包。
+- [x] 私有 namespace 中 Echo 与 Port Unreachable 行为抓包；Redirect 保留独立扩展。
 
 ## M14 — PC 局域网生态：NetBIOS / NBNS / SMB / IPX
 
@@ -239,7 +239,7 @@
 ## M18 — 多播与 MBONE
 
 - [x] IGMP/DVMRP/PIM/MBONE 历史与 CDN 替代研究；
-- [ ] 私有 namespace IGMP membership 实测；
+- [x] 私有 namespace IGMP membership 实测；
 - [x] 不接宿主现有路由域与多播边界。
 
 ## M19 — 比较研究设施

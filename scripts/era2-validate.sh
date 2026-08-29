@@ -35,4 +35,18 @@ ACTUAL=$(tshark -r "$PCAP" -T fields -e frame.number 2>/dev/null | wc -l)
 for msg in 1 2 3 5; do tshark -r "$PCAP" -Y "dhcp.option.dhcp == $msg" -T fields -e frame.number 2>/dev/null | grep -q . || { echo "missing DHCP message type $msg" >&2; exit 1; }; done
 for op in 1 3 4; do tshark -r "$PCAP" -Y "tftp.opcode == $op" -T fields -e frame.number 2>/dev/null | grep -q . || { echo "missing TFTP opcode $op" >&2; exit 1; }; done
 
+# M13/M18 are also declared real-capture.
+for stem in icmp-lifecycle igmp-membership; do
+  J="captures/era2-network/$stem.json"; P="captures/era2-network/$stem.pcapng"; T="captures/era2-network/$stem.frames.tsv"
+  for f in "$J" "$P" "$T"; do [ -s "$f" ] || { echo "missing real-capture evidence: $f" >&2; exit 1; }; done
+  jsonschema -i "$J" schemas/experiment.schema.json
+  [ "$(jq -r '.evidence_level' "$J")" = real-capture ]
+  [ "$(jq -r '.result.handshake' "$J")" = pass ]
+  d=$(jq -r '.result.frames' "$J"); a=$(tshark -r "$P" -T fields -e frame.number 2>/dev/null | wc -l)
+  [ "$d" -eq "$a" ] && [ "$a" -gt 0 ] || { echo "$stem frame mismatch" >&2; exit 1; }
+done
+tshark -r captures/era2-network/icmp-lifecycle.pcapng -Y 'icmp.type == 0' -T fields -e frame.number 2>/dev/null | grep -q .
+tshark -r captures/era2-network/icmp-lifecycle.pcapng -Y 'icmp.type == 3 && icmp.code == 3' -T fields -e frame.number 2>/dev/null | grep -q .
+tshark -r captures/era2-network/igmp-membership.pcapng -Y 'igmp' -T fields -e frame.number 2>/dev/null | grep -q .
+
 echo 'second-era validation: pass'
