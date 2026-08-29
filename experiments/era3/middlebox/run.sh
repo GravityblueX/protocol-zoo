@@ -30,9 +30,9 @@ backend origin
   server origin-a 198.18.230.2:18081 check
 EOF
 sudo ip netns exec "$NS" python3 $TMP/backend.py >$POUT/backend.log 2>&1 & PIDS="$PIDS $!"
-sudo ip netns exec "$NS" haproxy -f $TMP/proxy.cfg -db >$POUT/proxy.log 2>&1 & PIDS="$PIDS $!"
+sudo ip netns exec "$NS" /usr/sbin/haproxy -f $TMP/proxy.cfg -db >$POUT/proxy.log 2>&1 & PIDS="$PIDS $!"
 sudo ip netns exec "$NS" tcpdump -U -i lo -w $TMP/proxy.pcap 'tcp port 18080 or tcp port 18081' >/dev/null 2>&1 & PIDS="$PIDS $!"; sleep 2
-curl -sS -H 'Host: museum.test' http://198.18.230.1:18080/ >$POUT/client.txt
+sudo ip netns exec "$NS" curl -sS -H 'Host: museum.test' http://198.18.230.1:18080/ >$POUT/client.txt
 sudo ip netns exec "$NS" ss -nt >$POUT/sockets.txt
 sudo ip netns exec "$NS" conntrack -L >$OUT/conntrack.txt 2>&1 || true
 sleep 1; for p in $PIDS; do sudo kill -INT "$p" 2>/dev/null || true; done; sleep 1
@@ -40,6 +40,6 @@ sudo editcap -F pcapng $TMP/proxy.pcap $POUT/reverse-proxy.pcapng; sudo chown "$
 tshark -r $POUT/reverse-proxy.pcapng -d tcp.port==18080,http -d tcp.port==18081,http -T fields -E header=y -e frame.number -e ip.src -e ip.dst -e tcp.srcport -e tcp.dstport -e http.request.method -e http.host -e http.response.code -e http.response.line >$POUT/reverse-proxy.frames.tsv
 frames=$(tshark -r $POUT/reverse-proxy.pcapng -T fields -e frame.number | wc -l); now=$(date -u +%FT%TZ)
 cat >$POUT/evidence.json <<EOF
-{"id":"era3-reverse-proxy","era":3,"experiment":"private reverse proxy connection termination","protocols":["HTTP","TCP","reverse-proxy"],"environment":"Linux namespace with HAProxy and Python origin","topology":"client -> HAProxy -> origin on private loopback addresses","capture_point":"$NS:lo","capture_filter":"tcp port 18080 or tcp port 18081","tool":"HAProxy curl tcpdump tshark ss conntrack","tool_version":"$(haproxy -v | sed -n 1p)","started_at":"$now","bounded":true,"result":"pass","evidence_level":"L3","files":["captures/era3-proxy/reverse-proxy.pcapng","captures/era3-proxy/reverse-proxy.frames.tsv","captures/era3-proxy/client.txt","captures/era3-proxy/sockets.txt","captures/era3-proxy/backend.log","captures/era3-nat/conntrack.txt"],"claims":["One client request produces separate client-to-proxy and proxy-to-origin TCP legs, demonstrating transport termination rather than NAT-only forwarding."],"limitations":["Local single-namespace reconstruction; no public proxy or provider behavior is claimed."],"cleanup_verified":true,"wan":{"used":false,"endpoint_role":"none","provider_specific_claim":false}}
+{"id":"era3-reverse-proxy","era":3,"experiment":"private reverse proxy connection termination","protocols":["HTTP","TCP","reverse-proxy"],"environment":"Linux namespace with HAProxy and Python origin","topology":"client -> HAProxy -> origin on private loopback addresses","capture_point":"$NS:lo","capture_filter":"tcp port 18080 or tcp port 18081","tool":"HAProxy curl tcpdump tshark ss conntrack","tool_version":"$(/usr/sbin/haproxy -v | sed -n 1p)","started_at":"$now","bounded":true,"result":"pass","evidence_level":"L3","files":["captures/era3-proxy/reverse-proxy.pcapng","captures/era3-proxy/reverse-proxy.frames.tsv","captures/era3-proxy/client.txt","captures/era3-proxy/sockets.txt","captures/era3-proxy/backend.log","captures/era3-nat/conntrack.txt"],"claims":["One client request produces separate client-to-proxy and proxy-to-origin TCP legs, demonstrating transport termination rather than NAT-only forwarding."],"limitations":["Local single-namespace reconstruction; no public proxy or provider behavior is claimed."],"cleanup_verified":true,"wan":{"used":false,"endpoint_role":"none","provider_specific_claim":false}}
 EOF
 jsonschema -i $POUT/evidence.json "$ROOT/schemas/era3/evidence.schema.json"; cleanup; trap - EXIT INT TERM; echo "Era3 reverse proxy: pass ($frames frames)"
