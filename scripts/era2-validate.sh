@@ -92,6 +92,8 @@ if [ "$(jq -r '.evidence_level' "$PPPJ")" = real-capture ]; then
   grep -Eqi '7e 21' captures/era2-ppp/serial-hdlc.txt
   tshark -r captures/era2-ppp/ppp-icmp.pcapng -Y 'icmp.type == 8' -T fields -e frame.number 2>/dev/null | grep -q .
   tshark -r captures/era2-ppp/ppp-icmp.pcapng -Y 'icmp.type == 0' -T fields -e frame.number 2>/dev/null | grep -q .
+  [ "$(jq -r '.capture_point' "$PPPJ")" = 'pz-m11-a:any (PPP data observed on ppp0)' ]
+  [ "$(jq -r '.capture_filter' "$PPPJ")" = icmp ]
 fi
 
 echo 'second-era validation: pass'

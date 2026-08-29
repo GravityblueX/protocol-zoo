@@ -35,7 +35,7 @@ if grep -Eq 'local +IP address' "$ROOT/$OUT/pppd-a.log" 2>/dev/null && grep -Eq 
 if [ "$OK" -eq 1 ]; then
   tshark -r "$ROOT/$OUT/ppp-icmp.pcapng" -T fields -E header=y -e frame.number -e ip.src -e ip.dst -e icmp.type -e icmp.code >"$ROOT/$OUT/ppp-icmp.frames.tsv"
   cat >"$ROOT/$OUT/ppp.json" <<EOF
-{"protocol":"ppp","experiment":"m11-ppp-private-pty","evidence_level":"real-capture","environment":{"os":"linux","kernel":"$(uname -r)","topology":"two netns pppd endpoints bridged by private socat PTYs","tools":{"pppd":"$(/usr/sbin/pppd --version 2>&1 | sed -n 1p)","socat":"$(socat -V 2>&1 | sed -n 1p)","tshark":"$(tshark --version 2>/dev/null | sed -n 1p)"}},"capture_point":"$A:ppp0","command":"scripts/era2-ppp-capture.sh","capture_filter":"icmp on ppp0","result":{"handshake":"pass","capture":"$OUT/ppp-icmp.pcapng","frames":$FRAMES,"lcp_ipcp":"pass","serial_hdlc":"pass"},"sanitized":true,"notes":["Only private PTYs, namespaces and 198.18.170.0/24 were used."]}
+{"protocol":"ppp","experiment":"m11-ppp-private-pty","evidence_level":"real-capture","environment":{"os":"linux","kernel":"$(uname -r)","topology":"two netns pppd endpoints bridged by private socat PTYs","tools":{"pppd":"$(/usr/sbin/pppd --version 2>&1 | sed -n 1p)","socat":"$(socat -V 2>&1 | sed -n 1p)","tshark":"$(tshark --version 2>/dev/null | sed -n 1p)"}},"capture_point":"$A:any (PPP data observed on ppp0)","command":"scripts/era2-ppp-capture.sh","capture_filter":"icmp","result":{"handshake":"pass","capture":"$OUT/ppp-icmp.pcapng","frames":$FRAMES,"lcp_ipcp":"pass","serial_hdlc":"pass"},"sanitized":true,"notes":["Only private PTYs, namespaces and 198.18.170.0/24 were used."]}
 EOF
   printf 'M11 PPP: pass (%s frames)\n' "$FRAMES"
 else

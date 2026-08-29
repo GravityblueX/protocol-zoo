@@ -15,7 +15,7 @@
 | 传输设计异类 | [SCTP](species/sctp/)、[DCCP](species/dccp/)、[UDP-Lite](species/udp-lite/)、[GRE](species/gre/)、[IP-in-IP](species/ip-in-ip/) | SCTP、UDP-Lite、GRE、IP-in-IP 已在独立 Kali nested-netns 实测；DCCP 保留 capability/not-run |
 | 化石抓包馆 | [AppleTalk](species/appletalk/)；DECnet/VINES/IPX/SPX | AppleTalk 阅读闭环完成，其余遵守样本许可门禁并标记 `not-run` |
 
-完整索引见 [`docs/EXHIBITS.md`](docs/EXHIBITS.md)。
+完整索引见 [`docs/EXHIBITS.md`](docs/EXHIBITS.md)；Era 1–2 的实验与自然史总览见 [`docs/EVIDENCE-ATLAS.md`](docs/EVIDENCE-ATLAS.md)。
 
 ## 快速开始
 
@@ -105,6 +105,7 @@ studies/                  协议存亡比较矩阵
 - [`IMPLEMENTATION_PLAN.md`](IMPLEMENTATION_PLAN.md)：阶段完成情况
 - [`ROADMAP.md`](ROADMAP.md)：研究路线与停止条件
 - [`docs/EXHIBITS.md`](docs/EXHIBITS.md)：展品索引
+- [`docs/EVIDENCE-ATLAS.md`](docs/EVIDENCE-ATLAS.md)：Era 1–2 馆藏、自然史与证据导航
 - [`datasets/species.csv`](datasets/species.csv)：协议数据集
 - [`studies/survival-matrix.md`](studies/survival-matrix.md)：为什么死 / 为什么活
 - [`docs/COLOPHON.md`](docs/COLOPHON.md)：署名与资料归属
