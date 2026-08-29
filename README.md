@@ -106,6 +106,7 @@ studies/                  协议存亡比较矩阵
 - [`ROADMAP.md`](ROADMAP.md)：研究路线与停止条件
 - [`docs/EXHIBITS.md`](docs/EXHIBITS.md)：展品索引
 - [`docs/EVIDENCE-ATLAS.md`](docs/EVIDENCE-ATLAS.md)：Era 1–2 馆藏、自然史与证据导航
+- [`docs/era3/README.md`](docs/era3/README.md)：第三纪元总纲与证据等级
 - [`datasets/species.csv`](datasets/species.csv)：协议数据集
 - [`studies/survival-matrix.md`](studies/survival-matrix.md)：为什么死 / 为什么活
 - [`docs/COLOPHON.md`](docs/COLOPHON.md)：署名与资料归属

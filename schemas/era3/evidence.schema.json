@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/tmzncty/protocol-zoo/schema/era3-evidence.schema.json",
+  "title": "Protocol Zoo Era 3 evidence",
+  "type": "object",
+  "required": ["id","era","experiment","protocols","environment","topology","capture_point","capture_filter","tool","tool_version","started_at","bounded","result","evidence_level","files","claims","limitations","cleanup_verified","wan"],
+  "properties": {
+    "id": {"type":"string","pattern":"^era3-[a-z0-9-]+$"},
+    "era": {"const":3},
+    "experiment": {"type":"string","minLength":1},
+    "protocols": {"type":"array","minItems":1,"items":{"type":"string","minLength":1},"uniqueItems":true},
+    "environment": {"type":"string","minLength":1},
+    "topology": {"type":"string","minLength":1},
+    "capture_point": {"type":"string","minLength":1},
+    "capture_filter": {"type":"string","minLength":1},
+    "tool": {"type":"string","minLength":1},
+    "tool_version": {"type":"string","minLength":1},
+    "started_at": {"type":"string","format":"date-time"},
+    "bounded": {"const":true},
+    "result": {"enum":["pass","fail","not-run"]},
+    "evidence_level": {"enum":["L0","L1","L2","L3","L4","L5"]},
+    "files": {"type":"array","items":{"type":"string","minLength":1},"uniqueItems":true},
+    "claims": {"type":"array","minItems":1,"items":{"type":"string","minLength":1}},
+    "limitations": {"type":"array","minItems":1,"items":{"type":"string","minLength":1}},
+    "cleanup_verified": {"const":true},
+    "wan": {"type":"object","required":["used","endpoint_role","provider_specific_claim"],"properties":{"used":{"type":"boolean"},"endpoint_role":{"type":"string"},"provider_specific_claim":{"const":false}},"additionalProperties":false}
+  },
+  "additionalProperties": false
+}
