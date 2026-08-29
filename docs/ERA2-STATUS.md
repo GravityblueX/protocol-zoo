@@ -4,7 +4,7 @@
 
 | M | 主题 | 研究/数据 | 当前实验状态 | 证据 |
 |---|---|---|---|---|
-| M10 | RARP → BOOTP → DHCP → TFTP | RFC、启动链 fixture、era2 CSV | dnsmasq 已在私有 namespace 启动；当前客户端地址租约/启动链未完成 | `captures/era2-netns/boot-chain.json` = `not_run` |
+| M10 | RARP → BOOTP → DHCP → TFTP | RFC、启动链 fixture、era2 CSV | dnsmasq 已在私有 namespace 启动；TFTP 独立传输已尝试，DHCP 租约按客户端能力记录 | `captures/era2-netns/boot-chain.json`；DHCP/TFTP 分项状态 |
 | M11 | SLIP / CSLIP / PPP | RFC、framing fixture | private PTY/pppd 尚未实测 | `captures/fixtures/era2/ppp.txt` |
 | M12 | RIP → EGP → BGP | RFC、count-to-infinity fixture | 三节点路由拓扑尚未启动 | `captures/fixtures/era2/rip-count-to-infinity.txt` |
 | M13 | ICMP 生命周期 | RFC 792/6633、lifecycle fixture | 现代 Source Quench 不实发；error/redirect 实测待补 | `captures/fixtures/era2/icmp-lifecycle.txt` |

@@ -9,4 +9,5 @@ grep -q 'evidence_level' species/_template/README.md
 grep -q 'M19' IMPLEMENTATION_PLAN.md
 awk -F, 'NR==1 {n=NF; next} NF!=n {exit 1}' datasets/era2.csv
 for f in captures/fixtures/era2/*; do [ -s "$f" ] || exit 1; done
+if [ -f captures/era2-netns/boot-chain.json ]; then jsonschema -i captures/era2-netns/boot-chain.json schemas/experiment.schema.json; fi
 echo 'second-era validation: pass'
