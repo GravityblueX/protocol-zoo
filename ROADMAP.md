@@ -247,4 +247,4 @@
 - [x] 隐含世界假设矩阵、来源索引、实验矩阵；
 - [x] M10 新实验补结构化结果、capture、字段索引和清理验证；
 - [x] 第二纪元离线生态骨架与证据矩阵 checkpoint；
-- [ ] PPP/RIP/NetBIOS/IGMP 实验按能力继续推进。
+- [ ] PPP/RIP 实验按能力继续推进；NetBIOS/IGMP 已完成。

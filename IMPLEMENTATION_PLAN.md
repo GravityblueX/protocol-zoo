@@ -99,7 +99,8 @@
 - [ ] 在能力允许时完成 PPP、RIP 的真实 namespace 实验；
 - [x] 不可安全/合法复现的项目明确为 static、document-reconstruction 或 not-run；
 - [x] 第二纪元离线数据、fixture、来源和证据矩阵 checkpoint；
-- [ ] 第二纪元真实应用/链路实验按环境能力继续推进。
+- [x] DHCP/TFTP、ICMP/IGMP、NBNS 真实实验已纳入结构化证据；
+- [ ] PPP、RIP 真实链路/控制面实验按环境能力继续推进。
 
 ## 每个阶段门禁
 
