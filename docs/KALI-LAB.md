@@ -34,7 +34,7 @@ PZ_KALI_KEYDIR=/path/to/lab-key-dir \
 ./scripts/experiment.sh sctp
 ```
 
-这些入口依赖 guest 内预置的 `/root/pz-sctp.sh` 和 `/root/pz-remaining.sh`。它们不是协议实现；仓库提交的是调用入口、pcap、结构化结果和安全边界。每次实验结束都删除 guest 内 nested namespace。
+入口会先把仓库内 `scripts/guest/` 的实验脚本上传到 guest 临时路径再执行，不依赖 guest 的历史脚本状态。它们不是协议实现；仓库提交的是调用入口、guest 脚本、pcap、结构化结果和安全边界。每次实验结束都删除 guest 内 nested namespace。
 
 ## 不做的事
 

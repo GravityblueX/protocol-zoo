@@ -7,7 +7,7 @@
 | 展品 | 权威规范 | 实验状态 | 核心问题 |
 |---|---|---|---|
 | Telnet | RFC 854, RFC 855 | inetutils-telnetd 隔离抓包 + anatomy | IAC 协商如何嵌入字节流 |
-| FTP | RFC 959, RFC 2428 | pyftpdlib + tnftp 隔离抓包 | 为什么 active/passive 与 NAT 强相关 |
+| FTP | RFC 959, RFC 2428 | pyftpdlib + tnftp active/passive 隔离抓包 | 为什么 active/passive 与 NAT 强相关 |
 | Finger | RFC 1288 | request/response fixture | 极简接口为何泄露隐私 |
 | talk | BSD talk/talkd 文档 | 静态/模拟 | 邀请与终端用户模型 |
 | Gopher | RFC 1436 | menu/selector fixture | 目录信息模型 |

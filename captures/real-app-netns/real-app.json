@@ -1,11 +1,44 @@
 {
   "protocol": "telnet+ftp",
   "experiment": "phase-1-real-implementations-netns",
-  "environment": {"os": "linux", "kernel": "6.8.0-137-generic", "topology": "pz-client/pz-server netns-veth", "tools": {"telnetd": "inetutils-telnetd 2.5", "ftp_server": "pyftpdlib 1.5.9", "tcpdump": "4.99.4", "tshark": "4.2.2"}},
+  "environment": {
+    "os": "linux",
+    "kernel": "6.8.0-137-generic",
+    "topology": "pz-client/pz-server netns-veth",
+    "tools": {
+      "telnetd": "inetutils-telnetd 2.5",
+      "ftp_server": "pyftpdlib 1.5.9",
+      "tcpdump": "4.99.4",
+      "tshark": "4.2.2"
+    }
+  },
   "capture_point": "pz-server:pz-veth-s",
   "command": "sudo scripts/real-app-capture.sh captures/real-app-netns",
   "capture_filter": "tcp port 18023 or tcp port 2121 or portrange 19000-19009",
-  "result": {"handshake": "pass", "capture": "captures/real-app-netns/{telnet,ftp}.pcapng", "frames": 74, "telnet": {"handshake": "pass", "frames": 7, "negotiation_frame": 6}, "ftp": {"handshake": "pass", "control_connections": 2, "passive_data_connection": "198.18.0.1:40810 -> 198.18.0.2:19000", "retrieved_bytes": 25}},
+  "result": {
+    "handshake": "pass",
+    "capture": "captures/real-app-netns/{telnet,ftp}.pcapng",
+    "frames": 74,
+    "telnet": {
+      "handshake": "pass",
+      "frames": 7,
+      "negotiation_frame": 6
+    },
+    "ftp": {
+      "handshake": "pass",
+      "control_connections": 2,
+      "passive_data_connection": "198.18.0.1:40810 -> 198.18.0.2:19000",
+      "retrieved_bytes": 25,
+      "active_data_connection": "198.18.0.2:20 -> 198.18.0.1:<ephemeral>",
+      "active_frames": 22,
+      "passive_frames": 40
+    }
+  },
   "sanitized": true,
-  "notes": ["All traffic stayed inside documentation-range addresses in dedicated namespaces.", "FTP username/password were synthetic lab values and are redacted in submitted transcripts; no host account or real data used.", "Telnet frame 6 contains inetutils negotiation bytes; FTP frames include USER/PASS/230, EPSV/229, RETR/125/226 and a separate data four-tuple."]
+  "notes": [
+    "All traffic stayed inside documentation-range addresses in dedicated namespaces.",
+    "FTP username/password were synthetic lab values and are redacted in submitted transcripts; no host account or real data used.",
+    "Telnet frame 6 contains inetutils negotiation bytes; FTP frames include USER/PASS/230, EPSV/229, RETR/125/226 and a separate data four-tuple.",
+    "Dedicated active-mode capture is captures/real-app-netns/ftp-active.pcapng; EPRT/LIST/226 fields are in ftp-active.frames.tsv."
+  ]
 }
