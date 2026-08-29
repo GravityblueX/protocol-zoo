@@ -4,7 +4,7 @@ set -eu
 ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
 usage() {
   cat >&2 <<'EOF'
-usage: scripts/experiment.sh {fixtures|validate|capture|real-app|sctp|remaining|era2-fixtures|era2-capture|era2-network|era2-ipv6|era2-rip|era2-ppp|era2-validate|era3-validate|era3-dns|era3-http-tls|era2-static|capabilities|clean}
+usage: scripts/experiment.sh {fixtures|validate|capture|real-app|sctp|remaining|era2-fixtures|era2-capture|era2-network|era2-ipv6|era2-rip|era2-ppp|era2-validate|era3-validate|era3-dns|era3-http-tls|era3-gre|era2-static|capabilities|clean}
   fixtures       regenerate synthetic protocol fixtures (no network)
   validate       validate schema, captures, fixtures and cleanup state
   capture        run the isolated dummy TCP capture (needs sudo/CAP_NET_ADMIN)
@@ -22,6 +22,7 @@ usage: scripts/experiment.sh {fixtures|validate|capture|real-app|sctp|remaining|
   era3-validate  validate Era 3 schema, files, cleanup and sensitive-content gates
   era3-dns       run local delegated DNS hierarchy and cache experiment
   era3-http-tls  run local HTTP/1.x and TLS visibility experiment
+  era3-gre       run private GRE overlay packet experiment
   capabilities   record observational kernel/tool capability evidence
   clean          teardown Protocol Zoo namespaces
 EOF
@@ -44,6 +45,7 @@ case "$1" in
   era3-validate) exec "$ROOT/scripts/era3-validate.sh" ;;
   era3-dns) exec sudo "$ROOT/experiments/era3/dns/run.sh" ;;
   era3-http-tls) exec "$ROOT/experiments/era3/http-tls/run.sh" ;;
+  era3-gre) exec sudo "$ROOT/experiments/era3/tunnels/run.sh" ;;
   era2-static) exec "$ROOT/scripts/era2-static-results.sh" ;;
   era2-validate) exec "$ROOT/scripts/era2-validate.sh" ;;
   capabilities) exec "$ROOT/scripts/capability-report.sh" ;;
