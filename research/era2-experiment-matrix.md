@@ -1,0 +1,14 @@
+# 第二纪元实验矩阵
+
+| M | 展品 | 计划入口 | 当前证据 | 安全收口 |
+|---|---|---|---|---|
+| M10 | RARP/BOOTP/DHCP/TFTP | `era2-fixtures`; `era2-capture.sh` | dnsmasq/TFTP 已尝试；当前 client 地址租约未完成，保留 not_run 结构化结果 | 不接 host DHCP，不写默认配置 |
+| M11 | SLIP/CSLIP/PPP | guest `pppd`/pty | fixture/static；串行 pty 受权限与实现约束 | 不碰宿主串口 |
+| M12 | RIP/EGP | bird/FRR nested namespaces | static/fixture；RIP 可用本地 daemon 时再实测 | 不改宿主路由 |
+| M13 | ICMP Source Quench | synthetic ICMP | document reconstruction/static | 不向外部主机发包 |
+| M14 | NetBIOS/NBNS/SMB/IPX | local Samba/fixture | fixture；IPX/历史协议受内核/样本门禁 | 仅 namespace |
+| M15 | 6to4/Teredo/ISATAP/NAT64 | static/tunnel harness | document reconstruction/static | 不连接 relay/public broker |
+| M16 | NCP/pre-IP | `research/pre-ip-ncp.md` | document reconstruction | 不伪造历史 capture |
+| M17 | rlogin/rsh/rexec | loopback/netns only | static unless local daemon available | 合成凭据 |
+| M18 | IGMP/DVMRP/PIM/MBONE | local multicast namespace | fixture/static；不接现有路由域 | 组播范围限实验地址 |
+| M19 | natural history matrix | `second-era-natural-history.md` | comparative research + dataset/template | 标出事实/推断 |

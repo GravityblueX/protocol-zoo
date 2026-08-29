@@ -1,0 +1,9 @@
+BOOTP 3001 discover chaddr=02:00:00:00:00:03
+BOOTP 3002 reply yiaddr=198.18.50.3 siaddr=198.18.50.1 file=boot.img
+DHCP 1 DISCOVER
+DHCP 2 OFFER yiaddr=198.18.50.4
+DHCP 3 REQUEST
+DHCP 5 ACK next-server=198.18.50.1 bootfile-name=boot.img
+TFTP RRQ boot.img
+TFTP DATA block=1
+TFTP ACK block=1

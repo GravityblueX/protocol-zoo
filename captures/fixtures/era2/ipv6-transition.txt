@@ -1,0 +1,4 @@
+6to4 outer=2002:c612:0101::/48 inner=IPv4 198.18.90.1
+Teredo UDP/IPv4 mapped-client
+ISATAP proto-41 host-router
+NAT64 IPv6 client -> IPv4 server

@@ -87,6 +87,17 @@
 
 [x] 产出 `studies/survival-matrix.md`，比较安全假设、NAT/firewall、中间盒、权限、内核、生态、扩展、兼容成本和替代情况。
 
+## Phase 10 — Second era ecology M10–M19
+
+- [x] `species/_template/` 增加出生语境、线缆/拓扑、寻址、发现、信任、状态、失败、带宽、中间盒、死亡压力、后代和证据等级字段；
+- [x] `datasets/era2.csv`；
+- [x] `research/second-era-natural-history.md`、`era2-sources.md`、`era2-experiment-matrix.md`、`pre-ip-ncp.md`；
+- [x] M10–M19 离线 fixtures；
+- [ ] 在能力允许时完成 DHCP/TFTP、PPP、RIP、NetBIOS、IGMP 的真实 namespace 实验；
+- [x] 不可安全/合法复现的项目明确为 static、document-reconstruction 或 not-run；
+- [x] 第二纪元离线数据、fixture、来源和证据矩阵 checkpoint；
+- [ ] 第二纪元真实应用/链路实验按环境能力继续推进。
+
 ## 每个阶段门禁
 
 - 不重复成熟实现；

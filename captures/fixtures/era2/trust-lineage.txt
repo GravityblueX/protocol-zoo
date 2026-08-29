@@ -1,0 +1,4 @@
+rlogin trusted-host .rhosts assumption
+rsh remote command with stderr channel
+rexec username/password over TCP
+SSH host-key + public-key identity

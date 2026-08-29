@@ -180,3 +180,71 @@
 - 化石协议样本许可不明却准备提交二进制副本。
 
 协议动物园追求的是**可理解、可复现、可比较**，不是代码行数。
+
+---
+
+# 第二纪元：网络协议自然史（M10–M19）
+
+第二纪元不再只按协议数量推进，而按生态区推进。每个展品必须标出 `real-capture`、`fixture`、`static`、`document-reconstruction` 或 `not-run`，并记录出生语境、线缆/拓扑、寻址、发现、信任、失败和中间盒假设。
+
+## M10 — 开机之前：RARP → BOOTP → DHCP → TFTP
+
+- [ ] 空地址客户端到地址发现与启动文件获取的完整链；
+- [x] RFC/历史关系与离线启动链 fixture；
+- [ ] dnsmasq/成熟 DHCP-TFTP 在独立 namespace 实测；
+- [x] RARP/BOOTP 的不可行真实条件与证据边界记录。
+
+## M11 — 电话线时代：SLIP / CSLIP / PPP
+
+- [x] RFC 1055/1144/1661/1334/1994 来源与 framing/协商分析；
+- [x] SLIP/PPP 离线 framing 与 LCP/PAP/IPCP fixture；
+- [ ] pppd over private PTY 的真实抓包；
+- [x] 低速链路成本与现代替代分析。
+
+## M12 — 路由控制面：RIP → EGP → BGP
+
+- [x] RIP/EGP/BGP 历史关系与 count-to-infinity fixture；
+- [ ] 3-node RIP/FRR namespace 收敛实验；
+- [x] 不改宿主路由的控制面安全边界。
+
+## M13 — ICMP 的灭绝器官
+
+- [x] Echo、Unreachable、Redirect、Source Quench、Time Exceeded 的生命周期研究；
+- [x] RFC 6633 Source Quench 废弃证据与 synthetic fixture；
+- [ ] 私有 namespace 中 ICMP error/redirect 行为抓包。
+
+## M14 — PC 局域网生态：NetBIOS / NBNS / SMB / IPX
+
+- [x] RFC 1001/1002 与 B/P/M node 模型研究；
+- [ ] Samba/NBNS namespace 实测；
+- [x] IPX/DECnet/VINES 许可与内核门禁。
+
+## M15 — IPv6 过渡墓园
+
+- [x] 6to4、Teredo、ISATAP、6rd、NAT64/DNS64 来源与死亡压力；
+- [x] 无公网 relay/broker 的静态/fixture 边界；
+- [ ] 私有 IPv6-in-IPv4/IPv6-in-UDP transition 实测。
+
+## M16 — TCP/IP 之前：ARPANET Host/IMP、NCP、early TCP
+
+- [x] RFC 714 与 NCP → early TCP → TCP/IP document reconstruction；
+- [x] 禁止把历史重建冒充 real historical capture。
+
+## M17 — 信任局域网：rlogin / rsh / rexec → SSH
+
+- [x] RFC 1282 与 trusted-host 演化研究；
+- [ ] 私有 namespace rlogin/rsh/rexec 实测（有成熟实现才做）；
+- [x] 合成凭据与明文安全边界。
+
+## M18 — 多播与 MBONE
+
+- [x] IGMP/DVMRP/PIM/MBONE 历史与 CDN 替代研究；
+- [ ] 私有 namespace IGMP membership 实测；
+- [x] 不接宿主现有路由域与多播边界。
+
+## M19 — 比较研究设施
+
+- [x] 隐含世界假设矩阵、来源索引、实验矩阵；
+- [ ] 每个新实验均补结构化结果、capture、字段索引和清理验证；
+- [x] 第二纪元离线生态骨架与证据矩阵 checkpoint；
+- [ ] 真实 DHCP/PPP/RIP/NetBIOS/IGMP 实验按能力继续推进。

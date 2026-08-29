@@ -1,0 +1,5 @@
+PPP LCP Configure-Request MRU=1500 ACCM=0x000a
+PPP LCP Configure-Ack
+PPP PAP Authenticate-Request identity=demo
+PPP IPCP Configure-Request address=198.18.61.2
+PPP IPCP Configure-Ack

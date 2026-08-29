@@ -1,0 +1,4 @@
+NCP OPEN connection-control
+NCP CLOSE connection-control
+NCP FLOW-CONTROL
+TCP/IP split: NCP host-host semantics become TCP + IP layers

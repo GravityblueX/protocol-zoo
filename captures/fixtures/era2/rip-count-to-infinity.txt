@@ -1,0 +1,2 @@
+RIP v2 RESPONSE command=2 metric=1 198.18.70.0/24
+RIP v2 RESPONSE command=2 metric=16 198.18.70.0/24

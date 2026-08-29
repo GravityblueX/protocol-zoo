@@ -1,0 +1,4 @@
+NBNS query NAME=OFFICE<00> broadcast
+NBNS positive response address=198.18.80.2
+NBSS SESSION REQUEST
+SMB NEGOTIATE
