@@ -1,0 +1,17 @@
+#!/bin/sh
+# Produce structured not-run/static results for second-era mechanisms without external traffic.
+set -eu
+ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+OUT=${1:-captures/era2-static}; mkdir -p "$ROOT/$OUT"
+cat >"$ROOT/$OUT/status.json" <<'EOF'
+{
+  "protocol": "era2-static-suite",
+  "experiment": "phase-10-to-18-static-boundaries",
+  "environment": {"os": "linux", "kernel": "host-observation", "topology": "none", "tools": {"source": "RFC-indexed document reconstruction"}},
+  "result": {"handshake": "not_run", "capture": "none", "frames": 0, "m10_rarp_bootp": "document-reconstruction", "m11_slip_ppp": "fixture", "m12_egp": "document-reconstruction", "m13_source_quench": "synthetic-fixture", "m14_netbios": "fixture", "m15_ipv6_transition": "fixture", "m16_ncp": "document-reconstruction", "m17_rlogin": "static", "m18_multicast": "fixture"},
+  "sanitized": true,
+  "notes": ["No external traffic, relay, broker, historical host, or production route was used.", "not_run is intentional for mechanisms lacking a safe local implementation or requiring historical infrastructure."]
+}
+EOF
+jsonschema -i "$ROOT/$OUT/status.json" "$ROOT/schemas/experiment.schema.json"
+printf 'era2 static results: pass\n'

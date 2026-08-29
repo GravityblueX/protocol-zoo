@@ -6,7 +6,7 @@
 
 ## 当前状态
 
-实验基础设施和第一批研究展品已完成；Telnet、FTP 及第二纪元部分传输/隧道展品已有成熟实现或内核的 namespace 隔离实测。仓库优先记录可复现、可审查的实验；没有在当前环境真实跑通的协议，会明确标为 `fixture`、`static` 或 `not-run`，不把推导冒充实测。
+实验基础设施和第一批研究展品已完成；Telnet、FTP 及第二纪元部分传输/隧道展品已有成熟实现或内核的 namespace 隔离实测。第二纪元 M10–M19 的生态路线、数据集、研究矩阵和安全边界已建立；尚未成功的实测明确保留为 `not-run`。仓库优先记录可复现、可审查的实验；没有在当前环境真实跑通的协议，会明确标为 `fixture`、`static` 或 `not-run`，不把推导冒充实测。
 
 | 区域 | 展品 | 状态 |
 |---|---|---|
@@ -37,6 +37,9 @@
 # 第二纪元离线生态 fixtures 与校验
 ./scripts/experiment.sh era2-fixtures
 ./scripts/experiment.sh era2-validate
+
+# 第二纪元安全实验（当前环境可用项；失败项生成 not-run 证据）
+./scripts/era2-capture.sh
 ```
 
 也可以使用：
@@ -103,3 +106,4 @@ studies/                  协议存亡比较矩阵
 - [`research/era2-experiment-matrix.md`](research/era2-experiment-matrix.md)：M10–M19 第二纪元实验矩阵
 - [`research/second-era-natural-history.md`](research/second-era-natural-history.md)：协议隐含世界假设与自然史
 - [`datasets/era2.csv`](datasets/era2.csv)：第二纪元协议数据集
+- [`docs/ERA2-STATUS.md`](docs/ERA2-STATUS.md)：第二纪元一次性状态清单
