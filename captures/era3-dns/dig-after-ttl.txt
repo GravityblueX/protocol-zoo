@@ -1,0 +1,6 @@
+www.museum.test.	2	IN	A	198.18.200.42
+;; Query time: 1 msec
+;; SERVER: 198.18.200.13#53(198.18.200.13) (UDP)
+;; WHEN: Sat Aug 29 23:22:47 CST 2026
+;; MSG SIZE  rcvd: 88
+

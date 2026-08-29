@@ -1,0 +1,129 @@
+{
+  "era": 3,
+  "observed_at": "2026-08-29T23:13:47+08:00",
+  "evidence_policy": "local, wan, and inference are distinct; no WAN packet capture means no L4 claim",
+  "observations": [
+    {
+      "id": "E3-20260829-01",
+      "scope": "local",
+      "subject": "ipv4-pmtud",
+      "result": "pass",
+      "evidence_level": "L2",
+      "claim": "In a three-namespace path with a 1400-byte constricting link, a 1400-byte IPv4 packet succeeded and a 1401-byte DF packet elicited Fragmentation Needed with MTU 1400; the sender route cache recorded MTU 1400.",
+      "limitations": ["No pcap was saved", "This does not measure the WAN path"]
+    },
+    {
+      "id": "E3-20260829-02",
+      "scope": "local",
+      "subject": "traceroute",
+      "result": "pass",
+      "evidence_level": "L2",
+      "claim": "UDP and ICMP traceroute in the temporary topology reported the router at hop 1 and destination at hop 2.",
+      "limitations": ["No pcap was saved"]
+    },
+    {
+      "id": "E3-20260829-03",
+      "scope": "local",
+      "subject": "dhcp-tftp-integration",
+      "result": "pass",
+      "evidence_level": "L3",
+      "claim": "Existing self-generated frames 1-4 contain DHCP DISCOVER, OFFER, REQUEST, and ACK; frames 5-7 show the leased client address completing TFTP RRQ, DATA, and ACK for synthetic boot.img.",
+      "files": [
+        "captures/era2-netns/boot-chain.pcapng",
+        "captures/era2-netns/boot-chain.json",
+        "captures/era2-netns/boot-chain.frames.tsv"
+      ],
+      "limitations": ["Isolated 198.18.50.0/24 namespace", "No WAN DHCP was attempted"]
+    },
+    {
+      "id": "E3-20260829-04",
+      "scope": "wan",
+      "subject": "owned-vps-reachability",
+      "result": "pass",
+      "evidence_level": "L2",
+      "claim": "The registered owned IPv4 and IPv6 endpoints replied to echo, and the IPv4 endpoint accepted authenticated SSH during the observation window.",
+      "limitations": ["Live command observation only", "No packet capture"]
+    },
+    {
+      "id": "E3-20260829-05",
+      "scope": "wan",
+      "subject": "endpoint-mtu-state",
+      "result": "observed",
+      "evidence_level": "L2",
+      "claim": "The VPS reported eth0 MTU 1500 and an IPv6 connected-prefix route MTU of 1464.",
+      "limitations": ["Endpoint state is not an end-to-end PMTU measurement"]
+    },
+    {
+      "id": "E3-20260829-06",
+      "scope": "wan",
+      "subject": "pmtu-probes",
+      "result": "inconclusive",
+      "evidence_level": "L2",
+      "claim": "Adjacent large echo probe sizes produced non-monotonic response results, so no WAN PMTU value was assigned.",
+      "limitations": ["Single probes per size", "No synchronized endpoint capture"]
+    },
+    {
+      "id": "E3-20260829-07",
+      "scope": "wan",
+      "subject": "udp-traceroute",
+      "result": "inconclusive",
+      "evidence_level": "L2",
+      "claim": "A bounded UDP traceroute with one probe per TTL through 16 returned no matching replies while the endpoint remained reachable by ping and SSH.",
+      "limitations": ["Does not identify the suppressing hop or policy", "Does not determine physical hop count"]
+    },
+    {
+      "id": "E3-20260829-08",
+      "scope": "local",
+      "subject": "traceroute-capability",
+      "result": "not-run",
+      "evidence_level": "L0",
+      "claim": "TCP and ICMP traceroute modes were not run because raw-socket operations were not permitted in the invoking environment.",
+      "limitations": ["A permission failure is not a network-path result"]
+    },
+    {
+      "id": "E3-20260829-09",
+      "scope": "wan",
+      "subject": "tcp-high-port-transfer",
+      "result": "fail",
+      "evidence_level": "L2",
+      "claim": "The client command returned success, but the remote application read zero bytes and the listener remained active at check time; delivery was not verified.",
+      "limitations": ["No packet capture", "No application receipt"]
+    },
+    {
+      "id": "E3-20260829-10",
+      "scope": "wan",
+      "subject": "udp-high-port-transfer",
+      "result": "fail",
+      "evidence_level": "L2",
+      "claim": "The local UDP send command returned success, but the remote application read zero bytes; delivery was not verified.",
+      "limitations": ["No packet capture", "Local send acceptance is not a delivery acknowledgment"]
+    },
+    {
+      "id": "E3-20260829-11",
+      "scope": "inference",
+      "subject": "pmtud-black-hole",
+      "result": "source-supported",
+      "evidence_level": "L0",
+      "claim": "Suppressed ICMPv6 Packet Too Big messages can allow a TCP handshake yet cause larger data transfer to hang.",
+      "source": "RFC 8201 section 1",
+      "limitations": ["Not reproduced on the WAN in this run"]
+    },
+    {
+      "id": "E3-20260829-12",
+      "scope": "inference",
+      "subject": "dhcp-client-integration",
+      "result": "methodological",
+      "evidence_level": "L0",
+      "claim": "A captured DHCP option proves transmission by the server, not adoption by the client; client state and data-plane evidence are needed for adoption claims.",
+      "source": "RFC 2131 plus repository evidence method",
+      "limitations": ["Implementation behavior must be checked separately"]
+    }
+  ],
+  "cleanup": {
+    "local_namespaces_removed": true,
+    "remote_high_port_listeners_removed": true,
+    "remote_temp_files_removed": true,
+    "host_routes_or_firewall_modified": false,
+    "scripts_modified": false
+  }
+}

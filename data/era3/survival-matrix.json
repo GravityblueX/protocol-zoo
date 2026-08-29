@@ -1,0 +1,17 @@
+{
+  "era": 3,
+  "scale": {"high":"有利于存续/部署","medium":"影响取决于场景","low":"明显部署阻力"},
+  "dimensions": ["security_default","nat_firewall","middlebox","deployment","ecosystem"],
+  "rows": [
+    {"id":"http-1.1","security_default":"low","nat_firewall":"high","middlebox":"high","deployment":"high","ecosystem":"high","survival":"语义稳定、缓存和工具链广；明文被HTTPS挤压"},
+    {"id":"http-2","security_default":"medium","nat_firewall":"high","middlebox":"medium","deployment":"medium","ecosystem":"high","survival":"多路复用有效；实现和代理兼容成本较高"},
+    {"id":"http-3","security_default":"high","nat_firewall":"medium","middlebox":"medium","deployment":"medium","ecosystem":"high","survival":"QUIC能力有价值；UDP封锁与可观测性是限制"},
+    {"id":"tls","security_default":"high","nat_firewall":"high","middlebox":"medium","deployment":"medium","ecosystem":"high","survival":"通用安全承载；证书、密钥和终止点带来运维风险"},
+    {"id":"gre-ipip","security_default":"low","nat_firewall":"low","middlebox":"low","deployment":"low","ecosystem":"medium","survival":"受控overlay简单；无内建加密且受协议号/MTU/NAT限制"},
+    {"id":"encrypted-vpn","security_default":"high","nat_firewall":"medium","middlebox":"medium","deployment":"medium","ecosystem":"high","survival":"站点互联需求持续；密钥策略和MTU提高成本"},
+    {"id":"dns","security_default":"low","nat_firewall":"high","middlebox":"high","deployment":"high","ecosystem":"high","survival":"命名不可替代；缓存、劫持和增强协议并存"},
+    {"id":"nat-stateful-firewall","security_default":"medium","nat_firewall":"high","middlebox":"high","deployment":"medium","ecosystem":"high","survival":"地址复用与边界策略推动；状态和端到端代价"},
+    {"id":"proxy-cdn-lb","security_default":"medium","nat_firewall":"high","middlebox":"high","deployment":"medium","ecosystem":"high","survival":"缓存、分发、弹性和审计价值；集中风险与一致性成本"}
+  ],
+  "limitations": ["定性比较，不是流量或市场份额测量","版本、实现、配置和路径会改变评分","Era 3新增判断主要为L0 citation/document reconstruction"]
+}

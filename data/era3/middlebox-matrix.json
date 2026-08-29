@@ -1,0 +1,121 @@
+{
+  "schema": "protocol-zoo/era3-middlebox-matrix/v1",
+  "era": 3,
+  "title": "Middleboxes and distribution systems",
+  "evidence_policy": {
+    "default_level": "document-reconstruction",
+    "allowed_levels": ["real-capture", "fixture", "static", "document-reconstruction", "not-run"],
+    "note": "This matrix indexes normative and architectural claims. It is not packet-capture evidence and does not claim a public or production test."
+  },
+  "scoring": {
+    "values": ["low", "medium", "high", "context-dependent", "not-applicable"],
+    "meaning": "Qualitative design pressure, not a benchmark or compliance result."
+  },
+  "entries": [
+    {
+      "id": "nat",
+      "name": "NAT",
+      "milestone": "M16",
+      "role": "address-and-port-translation",
+      "layer": ["L3", "L4"],
+      "primary_rfc": ["RFC3022", "RFC4787", "RFC7857", "RFC6888", "RFC6598"],
+      "mechanisms": ["stateful mapping", "source address translation", "port translation", "mapping expiry", "hairpinning"],
+      "changes": ["source/destination address visibility", "inbound reachability", "endpoint identity assumptions"],
+      "compatibility_pressures": ["embedded addresses", "unknown transport protocols", "fragment handling", "multi-layer NAT"],
+      "security_and_limits": ["NAT is not inherently a firewall", "UDP timeout and filtering behavior vary", "CGN requires operational logging and creates attribution/privacy costs"],
+      "survival_factors": ["IPv4 address conservation", "private address deployment"],
+      "evidence_level": "document-reconstruction",
+      "confidence": "high"
+    },
+    {
+      "id": "stateful-firewall",
+      "name": "Stateful firewall",
+      "milestone": "M17",
+      "role": "policy-and-state-enforcement",
+      "layer": ["L3", "L4", "L7"],
+      "primary_rfc": ["RFC2979", "RFC4890", "RFC6092", "RFC8085"],
+      "mechanisms": ["state table", "directional policy", "filtering", "rate limiting", "optional application inspection"],
+      "changes": ["reachability", "failure signaling", "path transparency"],
+      "compatibility_pressures": ["ICMPv6 and PMTUD filtering", "IPv6 extension headers", "new transport protocols", "fragment reassembly"],
+      "security_and_limits": ["an open port result is local to an interface, address family, policy and time", "logs are local observations, not proof of endpoint delivery", "state capacity and timeout are implementation/configuration limits"],
+      "survival_factors": ["policy enforcement", "attack-surface reduction", "operational control"],
+      "evidence_level": "document-reconstruction",
+      "confidence": "high"
+    },
+    {
+      "id": "proxy",
+      "name": "Application proxy",
+      "milestone": "M23",
+      "role": "application-layer-mediated-connection",
+      "layer": ["L7"],
+      "primary_rfc": ["RFC9110", "RFC9111", "RFC7239"],
+      "mechanisms": ["forward proxy", "reverse proxy", "CONNECT tunnel", "TLS termination", "header mediation", "caching"],
+      "changes": ["one connection becomes two trust relationships", "client address visibility", "request semantic visibility"],
+      "compatibility_pressures": ["WebSocket and upgrade", "streaming", "long-lived connections", "untrusted Forwarded/X-Forwarded metadata"],
+      "security_and_limits": ["TLS termination changes the trust boundary", "cache correctness depends on freshness, Vary, authorization and Cache-Control", "proxy behavior is not a generic repair for non-proxy-aware protocols"],
+      "survival_factors": ["central authentication and policy", "observability", "connection pooling", "cache leverage"],
+      "evidence_level": "document-reconstruction",
+      "confidence": "high"
+    },
+    {
+      "id": "load-balancing",
+      "name": "Load balancing",
+      "milestone": "M24",
+      "role": "backend-selection-and-failover",
+      "layer": ["L4", "L7"],
+      "primary_rfc": ["RFC4786", "RFC9110"],
+      "mechanisms": ["five-tuple selection", "connection affinity", "health checks", "weighted routing", "request-aware routing", "Anycast deployment"],
+      "changes": ["service address to backend mapping", "client address visibility", "failure and session continuity"],
+      "compatibility_pressures": ["long-lived TCP", "UDP and QUIC state", "non-shared session state", "connection reuse"],
+      "security_and_limits": ["health checks only establish a narrow point-in-time condition", "equal connection counts do not imply equal work", "Anycast convergence and path changes can move clients", "PROXY metadata requires a trusted ingress"],
+      "survival_factors": ["capacity utilization", "failure isolation", "horizontal scaling"],
+      "evidence_level": "document-reconstruction",
+      "confidence": "medium"
+    },
+    {
+      "id": "cdn",
+      "name": "Content delivery network",
+      "milestone": "M25",
+      "role": "distributed-cache-and-edge-proxy",
+      "layer": ["L7"],
+      "primary_rfc": ["RFC9111", "RFC6770"],
+      "mechanisms": ["edge routing", "cache hit/miss", "origin fetch", "validation", "purge control plane"],
+      "changes": ["response origin", "freshness and consistency timing", "source topology visibility"],
+      "compatibility_pressures": ["personalization", "Authorization and Set-Cookie", "cache-key variation", "purge propagation", "TLS termination placement"],
+      "security_and_limits": ["wrong cache keys can leak cross-user data", "CDN does not guarantee low latency, strong consistency or availability", "purge is generally provider control-plane behavior, not an HTTP guarantee", "edge encryption does not define one universal trust model"],
+      "survival_factors": ["latency reduction", "origin shielding", "global fan-out", "bandwidth economics"],
+      "evidence_level": "document-reconstruction",
+      "confidence": "high"
+    }
+  ],
+  "museum": {
+    "id": "middlebox-museum",
+    "name": "Middlebox Museum",
+    "thesis": "Middleboxes improve deployability and policy control while introducing state, hidden topology, extra trust anchors and protocol compatibility costs.",
+    "exhibits": [
+      {"system": "NAT", "distortion": "addresses and ports are not stably visible", "end_to_end_question": "who can initiate inbound state and when does mapping expire?"},
+      {"system": "stateful-firewall", "distortion": "reachability depends on policy and state", "end_to_end_question": "are failure signals and PMTUD messages preserved?"},
+      {"system": "proxy", "distortion": "one connection becomes separate trust relationships", "end_to_end_question": "who terminates TLS and sees application semantics?"},
+      {"system": "load-balancing", "distortion": "service identity is separated from backend identity", "end_to_end_question": "how do affinity, failure convergence and capacity interact?"},
+      {"system": "cdn", "distortion": "responses may come from cache rather than origin", "end_to_end_question": "what are freshness, invalidation and privacy boundaries?"}
+    ],
+    "evidence_level": "document-reconstruction"
+  },
+  "references": [
+    {"rfc": "RFC2979", "title": "Behavior of and Requirements for Internet Firewalls"},
+    {"rfc": "RFC3022", "title": "Traditional IP Network Address Translator"},
+    {"rfc": "RFC3234", "title": "Middleboxes: Taxonomy and Issues"},
+    {"rfc": "RFC4786", "title": "Operation of Anycast Services"},
+    {"rfc": "RFC4787", "title": "NAT Behavioral Requirements for Unicast UDP"},
+    {"rfc": "RFC4890", "title": "Recommendations for Filtering ICMPv6 Messages in Firewalls"},
+    {"rfc": "RFC6092", "title": "Recommended Simple Security Capabilities in CPE (IPv6)"},
+    {"rfc": "RFC6598", "title": "IPv4 Address Space Reserved for Shared Address Space"},
+    {"rfc": "RFC6770", "title": "Requirements for the Application of Content Distribution Networks"},
+    {"rfc": "RFC6888", "title": "Common Requirements for Carrier-Grade NATs"},
+    {"rfc": "RFC7239", "title": "Forwarded HTTP Extension"},
+    {"rfc": "RFC7857", "title": "Updates to NAT Behavioral Requirements"},
+    {"rfc": "RFC8085", "title": "UDP Usage Guidelines for Application Designers"},
+    {"rfc": "RFC9110", "title": "HTTP Semantics"},
+    {"rfc": "RFC9111", "title": "HTTP Caching"}
+  ]
+}

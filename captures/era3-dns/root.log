@@ -1,0 +1,66 @@
+29-Aug-2026 23:22:42.618 starting BIND 9.18.39-0ubuntu0.24.04.6-Ubuntu (Extended Support Version) <id:>
+29-Aug-2026 23:22:42.618 running on Linux x86_64 6.8.0-137-generic #137-Ubuntu SMP PREEMPT_DYNAMIC Fri Jul 17 20:28:23 UTC 2026
+29-Aug-2026 23:22:42.618 built with  '--build=x86_64-linux-gnu' '--prefix=/usr' '--includedir=${prefix}/include' '--mandir=${prefix}/share/man' '--infodir=${prefix}/share/info' '--sysconfdir=/etc' '--localstatedir=/var' '--disable-option-checking' '--disable-silent-rules' '--libdir=${prefix}/lib/x86_64-linux-gnu' '--runstatedir=/run' '--disable-maintainer-mode' '--disable-dependency-tracking' '--libdir=/usr/lib/x86_64-linux-gnu' '--sysconfdir=/etc/bind' '--with-python=python3' '--localstatedir=/' '--enable-threads' '--enable-largefile' '--with-libtool' '--enable-shared' '--disable-static' '--with-gost=no' '--with-openssl=/usr' '--with-gssapi=yes' '--with-libidn2' '--with-json-c' '--with-lmdb=/usr' '--with-gnu-ld' '--with-maxminddb' '--with-atf=no' '--enable-ipv6' '--enable-rrl' '--enable-filter-aaaa' '--disable-native-pkcs11' 'build_alias=x86_64-linux-gnu' 'CFLAGS=-g -O2 -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer -ffile-prefix-map=/build/bind9-L5C0ZL/bind9-9.18.39=. -flto=auto -ffat-lto-objects -fstack-protector-strong -fstack-clash-protection -Wformat -Werror=format-security -fcf-protection -fdebug-prefix-map=/build/bind9-L5C0ZL/bind9-9.18.39=/usr/src/bind9-1:9.18.39-0ubuntu0.24.04.6 -fno-strict-aliasing -fno-delete-null-pointer-checks -DNO_VERSION_DATE -DDIG_SIGCHASE' 'LDFLAGS=-Wl,-Bsymbolic-functions -flto=auto -ffat-lto-objects -Wl,-z,relro -Wl,-z,now -ledit' 'CPPFLAGS=-Wdate-time -D_FORTIFY_SOURCE=3'
+29-Aug-2026 23:22:42.618 running as: named -g -u root -c /etc/bind/era3-dns.TYqJ/root.conf
+29-Aug-2026 23:22:42.618 compiled by GCC 13.3.0
+29-Aug-2026 23:22:42.618 compiled with OpenSSL version: OpenSSL 3.0.13 30 Jan 2024
+29-Aug-2026 23:22:42.618 linked to OpenSSL version: OpenSSL 3.0.13 30 Jan 2024
+29-Aug-2026 23:22:42.618 compiled with libuv version: 1.48.0
+29-Aug-2026 23:22:42.618 linked to libuv version: 1.48.0
+29-Aug-2026 23:22:42.618 compiled with libxml2 version: 2.9.14
+29-Aug-2026 23:22:42.618 linked to libxml2 version: 20914
+29-Aug-2026 23:22:42.618 compiled with json-c version: 0.17
+29-Aug-2026 23:22:42.618 linked to json-c version: 0.17
+29-Aug-2026 23:22:42.618 compiled with zlib version: 1.3
+29-Aug-2026 23:22:42.618 linked to zlib version: 1.3
+29-Aug-2026 23:22:42.618 ----------------------------------------------------
+29-Aug-2026 23:22:42.618 BIND 9 is maintained by Internet Systems Consortium,
+29-Aug-2026 23:22:42.618 Inc. (ISC), a non-profit 501(c)(3) public-benefit 
+29-Aug-2026 23:22:42.618 corporation.  Support and training for BIND 9 are 
+29-Aug-2026 23:22:42.618 available at https://www.isc.org/support
+29-Aug-2026 23:22:42.618 ----------------------------------------------------
+29-Aug-2026 23:22:42.618 found 48 CPUs, using 48 worker threads
+29-Aug-2026 23:22:42.618 using 48 UDP listeners per interface
+29-Aug-2026 23:22:42.684 DNSSEC algorithms: RSASHA1 NSEC3RSASHA1 RSASHA256 RSASHA512 ECDSAP256SHA256 ECDSAP384SHA384 ED25519 ED448
+29-Aug-2026 23:22:42.685 DS algorithms: SHA-1 SHA-256 SHA-384
+29-Aug-2026 23:22:42.685 HMAC algorithms: HMAC-MD5 HMAC-SHA1 HMAC-SHA224 HMAC-SHA256 HMAC-SHA384 HMAC-SHA512
+29-Aug-2026 23:22:42.685 TKEY mode 2 support (Diffie-Hellman): yes
+29-Aug-2026 23:22:42.685 TKEY mode 3 support (GSS-API): yes
+29-Aug-2026 23:22:42.689 the initial working directory is '/media/tmzn/DATA5/protocol-zoo'
+29-Aug-2026 23:22:42.689 loading configuration from '/etc/bind/era3-dns.TYqJ/root.conf'
+29-Aug-2026 23:22:42.689 the working directory is now '/etc/bind/era3-dns.TYqJ/root'
+29-Aug-2026 23:22:42.689 reading built-in trust anchors from file '/etc/bind/bind.keys'
+29-Aug-2026 23:22:42.690 looking for GeoIP2 databases in '/usr/share/GeoIP'
+29-Aug-2026 23:22:42.690 using default UDP/IPv4 port range: [32768, 60999]
+29-Aug-2026 23:22:42.691 using default UDP/IPv6 port range: [32768, 60999]
+29-Aug-2026 23:22:42.691 listening on IPv4 interface lo, 198.18.200.10#53
+29-Aug-2026 23:22:42.712 Could not open '/etc/bind/era3-dns.TYqJ/root.pid'.
+29-Aug-2026 23:22:42.712 Please check file and directory permissions or reconfigure the filename.
+29-Aug-2026 23:22:42.712 could not open file '/etc/bind/era3-dns.TYqJ/root.pid': Permission denied
+29-Aug-2026 23:22:42.712 generating session key for dynamic DNS
+29-Aug-2026 23:22:42.712 Could not open '/etc/bind/era3-dns.TYqJ/root.key'.
+29-Aug-2026 23:22:42.712 Please check file and directory permissions or reconfigure the filename.
+29-Aug-2026 23:22:42.712 could not open file '/etc/bind/era3-dns.TYqJ/root.key': Permission denied
+29-Aug-2026 23:22:42.712 could not create /etc/bind/era3-dns.TYqJ/root.key
+29-Aug-2026 23:22:42.712 failed to generate session key for dynamic DNS: permission denied
+29-Aug-2026 23:22:42.712 sizing zone task pool based on 1 zones
+29-Aug-2026 23:22:42.722 set up managed keys zone for view _default, file 'managed-keys.bind'
+29-Aug-2026 23:22:42.733 configuring command channel from '/etc/bind/rndc.key'
+29-Aug-2026 23:22:42.733 open: /etc/bind/rndc.key: permission denied
+29-Aug-2026 23:22:42.735 command channel listening on 127.0.0.1#953
+29-Aug-2026 23:22:42.735 configuring command channel from '/etc/bind/rndc.key'
+29-Aug-2026 23:22:42.735 open: /etc/bind/rndc.key: permission denied
+29-Aug-2026 23:22:42.736 command channel listening on ::1#953
+29-Aug-2026 23:22:42.736 not using config file logging statement for logging due to -g option
+29-Aug-2026 23:22:42.737 managed-keys-zone: loaded serial 0
+29-Aug-2026 23:22:42.738 zone ./IN: loaded serial 1
+29-Aug-2026 23:22:42.738 all zones loaded
+29-Aug-2026 23:22:42.738 running
+29-Aug-2026 23:22:48.830 no longer listening on 198.18.200.10#53
+29-Aug-2026 23:22:48.831 shutting down
+29-Aug-2026 23:22:48.831 stopping command channel on 127.0.0.1#953
+29-Aug-2026 23:22:48.831 stopping command channel on ::1#953
+29-Aug-2026 23:22:48.832 error writing NTA file for view '_default': permission denied
+29-Aug-2026 23:22:48.832 error writing NTA file for view '_bind': permission denied
+29-Aug-2026 23:22:48.833 automatic interface scanning terminated: end of file
+29-Aug-2026 23:22:48.850 exiting

@@ -1,0 +1,28 @@
+{
+  "research_scope": "Era 3 historical research: DNS/BGP/CIDR/IXP/Anycast",
+  "retrieved": "2026-08-29",
+  "retrieval_timezone": "UTC+8",
+  "notes": [
+    "RFC HTML section anchors are used because RFC pages do not provide stable printed page numbering.",
+    "No experiment scripts, captures, or Git metadata were modified."
+  ],
+  "sources": [
+    {"id":"DNS-1034","title":"Domain Names - Concepts and Facilities","authors":["Paul Mockapetris"],"venue":"RFC 1034; ISI","year":1987,"doi":null,"url":"https://www.rfc-editor.org/rfc/rfc1034","source_type":"standard","anchors":["Abstract","§2.4"]},
+    {"id":"DNS-1035","title":"Domain Names - Implementation and Specification","authors":["Paul Mockapetris"],"venue":"RFC 1035; ISI","year":1987,"doi":null,"url":"https://www.rfc-editor.org/rfc/rfc1035","source_type":"standard","anchors":["Abstract","§4"]},
+    {"id":"EGP-904","title":"Exterior Gateway Protocol Formal Specification","authors":["David L. Mills"],"venue":"RFC 904","year":1984,"doi":null,"url":"https://www.rfc-editor.org/rfc/rfc904","source_type":"standard","anchors":["§1"]},
+    {"id":"BGP-1771","title":"A Border Gateway Protocol 4 (BGP-4)","authors":["Yakov Rekhter","Tony Li","Susan Hares"],"venue":"RFC 1771","year":1995,"doi":null,"url":"https://www.rfc-editor.org/rfc/rfc1771","source_type":"standard","anchors":["Abstract","§3","§5"]},
+    {"id":"BGP-4271","title":"A Border Gateway Protocol 4 (BGP-4)","authors":["Yakov Rekhter","Tony Li","Susan Hares"],"venue":"RFC 4271","year":2006,"doi":null,"url":"https://www.rfc-editor.org/rfc/rfc4271","source_type":"standard","anchors":["Abstract","§3","§5"]},
+    {"id":"CIDR-1519","title":"Classless Inter-Domain Routing (CIDR): an Address Assignment and Aggregation Strategy","authors":["Vinton Fuller","T. Li","J. Yu","K. Varadhan"],"venue":"RFC 1519; BARRNet/cisco/MERIT/OARnet","year":1993,"doi":null,"url":"https://www.rfc-editor.org/rfc/rfc1519","source_type":"standard","anchors":["§1","§2","§3"]},
+    {"id":"CIDR-4632","title":"Classless Inter-domain Routing (CIDR): The Internet Address Assignment and Aggregation Plan","authors":["V. Fuller","T. Li"],"venue":"RFC 4632","year":2006,"doi":null,"url":"https://www.rfc-editor.org/rfc/rfc4632","source_type":"standard","anchors":["§1","§3"]},
+    {"id":"IXP-7948","title":"Internet Exchange BGP Route Server","authors":["D. H. Hain","et al."],"venue":"RFC 7948; IETF","year":2016,"doi":null,"url":"https://www.rfc-editor.org/rfc/rfc7948","source_type":"standard","anchors":["§1"]},
+    {"id":"IXP-PCH","title":"Internet Exchange Directory","authors":["Packet Clearing House"],"venue":"Packet Clearing House","year":null,"doi":null,"url":"https://www.pch.net/ixpdir","source_type":"institutional archive","full_text_status":"web resource"},
+    {"id":"IXP-EUROIX","title":"IXP Database","authors":["Euro-IX"],"venue":"Euro-IX","year":null,"doi":null,"url":"https://ixpdb.euro-ix.net/","source_type":"institutional archive","full_text_status":"web resource"},
+    {"id":"ANYCAST-1546","title":"Host Anycasting Service","authors":["Craig Partridge","Terry Mendez","William Milliken"],"venue":"RFC 1546; BBN","year":1993,"doi":null,"url":"https://www.rfc-editor.org/rfc/rfc1546","source_type":"informational/experimental","anchors":["Abstract","§2"]},
+    {"id":"ANYCAST-4786","title":"Operation of Anycast Services","authors":["John Abley","Kurtis Lindqvist"],"venue":"RFC 4786; BCP 126; Afilias Canada/Netnod","year":2006,"doi":null,"url":"https://www.rfc-editor.org/rfc/rfc4786","source_type":"best current practice","anchors":["Abstract","§3","§4"]}
+  ],
+  "database_searches": {
+    "cnki": ["域名系统 分层 委派","边界网关协议 自治系统 策略路由","无类别域间路由 地址聚合","互联网交换中心 对等互联","IP 任播 服务"],
+    "google_scholar": ["domain name system delegation caching Mockapetris","BGP policy inter-domain routing autonomous systems","CIDR address allocation aggregation","Internet exchange point route server peering","IP anycast operational services"],
+    "arxiv": ["DNS delegation anycast","BGP inter-domain routing","Internet exchange point"]
+  }
+}

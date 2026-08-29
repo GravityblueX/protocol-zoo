@@ -1,0 +1,10 @@
+{
+  "era": 3,
+  "dataset_type": "evidence-index",
+  "records": [
+    {"id":"era3-http-tls-tunnels-e2e-static","result":"not-run","evidence_level":"L0","status":"document-reconstruction","documents":["docs/era3/HTTP.md","docs/era3/TLS.md","docs/era3/TUNNELS.md","docs/era3/END-TO-END.md"],"claims":["规范、历史演化和设计边界已整理"],"limitations":["没有本阶段新增capture","不代表全球部署或公网路径测量","HTTP/TLS具体实现行为需独立复现"]},
+    {"id":"era3-survival-matrix-static","result":"not-run","evidence_level":"L0","status":"comparative-analysis","documents":["docs/era3/SURVIVAL-MATRIX.md"],"data":"data/era3/survival-matrix.json","claims":["以安全、可达性、中间盒、门槛和生态比较存续压力"],"limitations":["定性评分，不是流量统计","评分随版本、配置和路径变化"]}
+  ],
+  "safety": {"bounded": true, "wan_used": false, "cleanup_verified": true, "credentials_or_private_keys": false},
+  "note": "本索引不是 schemas/era3/evidence.schema.json 所要求的单实验记录；正式实验记录应放在 captures/era3-*，本任务未创建实验或修改脚本。"
+}

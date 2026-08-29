@@ -4,7 +4,7 @@ set -eu
 ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
 usage() {
   cat >&2 <<'EOF'
-usage: scripts/experiment.sh {fixtures|validate|capture|real-app|sctp|remaining|era2-fixtures|era2-capture|era2-network|era2-ipv6|era2-rip|era2-ppp|era2-validate|era2-static|capabilities|clean}
+usage: scripts/experiment.sh {fixtures|validate|capture|real-app|sctp|remaining|era2-fixtures|era2-capture|era2-network|era2-ipv6|era2-rip|era2-ppp|era2-validate|era3-validate|era3-dns|era2-static|capabilities|clean}
   fixtures       regenerate synthetic protocol fixtures (no network)
   validate       validate schema, captures, fixtures and cleanup state
   capture        run the isolated dummy TCP capture (needs sudo/CAP_NET_ADMIN)
@@ -18,7 +18,9 @@ usage: scripts/experiment.sh {fixtures|validate|capture|real-app|sctp|remaining|
   era2-rip       run real three-node M12 RIPv2 propagation
   era2-ppp       run bounded M11 PPP-over-private-PTY experiment
   era2-static    regenerate structured static/not-run boundaries
-  era2-validate  require and verify M10 real-capture evidence
+  era2-validate  require and verify M10-M19 real-capture evidence
+  era3-validate  validate Era 3 schema, files, cleanup and sensitive-content gates
+  era3-dns       run local delegated DNS hierarchy and cache experiment
   capabilities   record observational kernel/tool capability evidence
   clean          teardown Protocol Zoo namespaces
 EOF
@@ -38,6 +40,8 @@ case "$1" in
   era2-ipv6) exec "$ROOT/scripts/era2-ipv6-capture.sh" "${2:-captures/era2-ipv6}" ;;
   era2-rip) exec "$ROOT/scripts/era2-rip-capture.sh" "${2:-captures/era2-rip}" ;;
   era2-ppp) exec "$ROOT/scripts/era2-ppp-capture.sh" "${2:-captures/era2-ppp}" ;;
+  era3-validate) exec "$ROOT/scripts/era3-validate.sh" ;;
+  era3-dns) exec sudo "$ROOT/experiments/era3/dns/run.sh" ;;
   era2-static) exec "$ROOT/scripts/era2-static-results.sh" ;;
   era2-validate) exec "$ROOT/scripts/era2-validate.sh" ;;
   capabilities) exec "$ROOT/scripts/capability-report.sh" ;;

@@ -1,0 +1,37 @@
+frame.number	ip.src	ip.dst	dns.flags.response	dns.qry.name	dns.flags.rcode	dns.a	dns.ns
+1	198.18.200.13	198.18.200.13	False	www.museum.test			
+2	198.18.200.10	198.18.200.10	False	test			
+3	198.18.200.10	198.18.200.10	False	<Root>			
+4	198.18.200.10	198.18.200.10	True	test	0	198.18.200.11	ns.test
+5	198.18.200.10	198.18.200.10	True	<Root>	0		a.root
+6	198.18.200.10	198.18.200.10	False	ns.test			
+7	198.18.200.11	198.18.200.11	False	museum.test			
+8	198.18.200.10	198.18.200.10	True	ns.test	0	198.18.200.11	ns.test
+9	198.18.200.11	198.18.200.11	False	ns.test			
+10	198.18.200.11	198.18.200.11	True	museum.test	0	198.18.200.12	ns.museum.test
+11	198.18.200.11	198.18.200.11	True	ns.test	0		
+12	198.18.200.12	198.18.200.12	False	www.museum.test			
+13	198.18.200.12	198.18.200.12	True	www.museum.test	0	198.18.200.42,198.18.200.12	ns.museum.test
+14	198.18.200.10	198.18.200.10	False	ns.museum.test			
+15	198.18.200.13	198.18.200.13	True	www.museum.test	0	198.18.200.42	
+16	198.18.200.10	198.18.200.10	True	ns.museum.test	0	198.18.200.11	ns.test
+17	198.18.200.11	198.18.200.11	False	ns.museum.test			
+18	198.18.200.11	198.18.200.11	True	ns.museum.test	0	198.18.200.12	ns.museum.test
+19	198.18.200.12	198.18.200.12	False	ns.museum.test			
+20	198.18.200.12	198.18.200.12	True	ns.museum.test	0		
+21	198.18.200.13	198.18.200.13	False	www.museum.test			
+22	198.18.200.13	198.18.200.13	True	www.museum.test	0	198.18.200.42	
+23	198.18.200.13	198.18.200.13	False	www.museum.test			
+24	198.18.200.11	198.18.200.11	False	museum.test			
+25	198.18.200.11	198.18.200.11	True	museum.test	0	198.18.200.12	ns.museum.test
+26	198.18.200.12	198.18.200.12	False	www.museum.test			
+27	198.18.200.12	198.18.200.12	True	www.museum.test	0	198.18.200.42,198.18.200.12	ns.museum.test
+28	198.18.200.13	198.18.200.13	True	www.museum.test	0	198.18.200.42	
+29	198.18.200.13	198.18.200.13	False	missing.museum.test			
+30	198.18.200.12	198.18.200.12	False	missing.museum.test			
+31	198.18.200.12	198.18.200.12	True	missing.museum.test	3		
+32	198.18.200.13	198.18.200.13	True	missing.museum.test	3		
+33	198.18.200.13	198.18.200.13	False	missing.museum.test			
+34	198.18.200.13	198.18.200.13	True	missing.museum.test	3		
+35	198.18.200.10	198.18.200.10	False	test			
+36	198.18.200.10	198.18.200.10	True	test	0	198.18.200.11	ns.test

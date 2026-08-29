@@ -1,0 +1,14 @@
+{
+  "era": 3,
+  "title": "The Internet Grows Organs",
+  "status": "research-dataset",
+  "evidence_note": "Era 3专题新增材料以L0 citation/document reconstruction为主；not-run不表示协议不存在。",
+  "protocols": [
+    {"id":"http-1.1","family":"HTTP","versions":["0.9","1.0","1.1"],"semantic_reference":"RFC 9110","message_reference":"RFC 9112","transport":"TCP (HTTP/1.x)","status":"dominant-and-maintained","evidence_level":"L0","local_experiment":"not-run","limitations":["未提交HTTP抓包；不外推浏览器或公网行为"]},
+    {"id":"http-2","family":"HTTP","versions":["2"],"semantic_reference":"RFC 9110","message_reference":"RFC 9113","transport":"TCP","status":"dominant-and-maintained","evidence_level":"L0","local_experiment":"not-run","limitations":["未测量多路复用性能或代理兼容性"]},
+    {"id":"http-3","family":"HTTP","versions":["3"],"semantic_reference":"RFC 9110","message_reference":"RFC 9114","transport":"QUIC / UDP","status":"maintained-and-deployed","evidence_level":"L0","local_experiment":"not-run","limitations":["未验证UDP可达性、连接迁移或公网路径"]},
+    {"id":"tls","family":"TLS","versions":["1.2","1.3"],"reference":"RFC 5246; RFC 8446","status":"dominant-and-maintained","evidence_level":"L0","local_experiment":"not-run","limitations":["未提交握手抓包或证书材料；不推断具体配置安全"]},
+    {"id":"ip-in-ip-gre","family":"tunnel","versions":["IP-in-IP","GRE"],"reference":"RFC 2003; RFC 2784; RFC 2890","status":"specialized-and-maintained","evidence_level":"L0","local_experiment":"not-run","limitations":["无公网可达性或性能结论；内建加密不存在"]},
+    {"id":"end-to-end","family":"architecture","reference":"Saltzer-Reed-Clark 1984; RFC 3234","status":"design-principle-under-pressure","evidence_level":"L0","local_experiment":"not-run","limitations":["比较性分析，不是全球路径测量"]}
+  ]
+}

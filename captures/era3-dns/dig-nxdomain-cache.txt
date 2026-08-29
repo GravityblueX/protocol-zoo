@@ -1,0 +1,10 @@
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NXDOMAIN, id: 4668
+;; flags: qr rd ra; QUERY: 1, ANSWER: 0, AUTHORITY: 1, ADDITIONAL: 1
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 1232
+; COOKIE: 81f13aef0365439c010000006a92f94799d18cedce2c811b (good)
+;; AUTHORITY SECTION:
+museum.test.		2	IN	SOA	ns.museum.test. hostmaster.museum.test. 1 60 60 60 4
+
