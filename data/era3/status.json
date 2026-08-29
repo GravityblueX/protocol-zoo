@@ -1,0 +1,11 @@
+{
+  "era": 3,
+  "title": "The Internet Grows Organs",
+  "status": "closed-with-explicit-boundaries",
+  "real_local_packet_evidence": ["DNS hierarchy/cache", "HTTP/1.0 and HTTP/1.1", "TLS visibility", "GRE overlay", "reverse proxy termination", "IPv4 PMTUD", "UDP and ICMP traceroute"],
+  "reused_evidence": ["Era 2 DHCP to TFTP"],
+  "bounded_wan_observations": ["owned VPS reachability", "endpoint MTU state", "bounded traceroute and TCP/UDP probes"],
+  "document_reconstruction_or_blocked": ["public BGP announcement", "full IXP route server experiment", "public anycast manipulation", "WireGuard WAN tunnel", "global CDN", "provider NAT classification"],
+  "claim_boundary": "A successful local model is not equivalent to public Internet deployment; one WAN observation applies only to its time, path and endpoint.",
+  "validation": ["protocol-zoo validation", "second-era validation", "third-era validation", "make check"]
+}
