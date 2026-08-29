@@ -107,3 +107,4 @@ studies/                  协议存亡比较矩阵
 - [`research/second-era-natural-history.md`](research/second-era-natural-history.md)：协议隐含世界假设与自然史
 - [`datasets/era2.csv`](datasets/era2.csv)：第二纪元协议数据集
 - [`docs/ERA2-STATUS.md`](docs/ERA2-STATUS.md)：第二纪元一次性状态清单
+- [`research/era2-blockers.md`](research/era2-blockers.md)：剩余真实实验的已验证 blocker
