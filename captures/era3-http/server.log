@@ -1,0 +1,2 @@
+('198.18.210.1', 55998) HTTP/1.0 museum.test "GET / HTTP/1.0" 200 -
+('198.18.210.1', 56006) HTTP/1.1 museum.test "GET / HTTP/1.1" 200 -
