@@ -1,0 +1,38 @@
+#!/bin/sh
+# M12: three-node RIPv2 propagation with BIRD in isolated namespaces.
+set -eu
+ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd); OUT=${1:-captures/era2-rip}; TMP=$(mktemp -d /tmp/pz-rip.XXXXXX); PIDS=""
+cleanup(){ for p in $PIDS; do sudo kill "$p" 2>/dev/null || true; done; for n in a b c; do sudo ip netns del pz-rip-$n 2>/dev/null || true; done; sudo rm -rf "$TMP"; }
+trap cleanup EXIT INT TERM
+mkdir -p "$ROOT/$OUT"; rm -f "$ROOT/$OUT"/*; cleanup; TMP=$(mktemp -d /tmp/pz-rip.XXXXXX); sudo chmod 777 "$TMP"
+for n in a b c; do sudo ip netns add pz-rip-$n; sudo ip -n pz-rip-$n link set lo up; done
+sudo ip link add pz-rip-ab-a type veth peer name pz-rip-ab-b; sudo ip link set pz-rip-ab-a netns pz-rip-a; sudo ip link set pz-rip-ab-b netns pz-rip-b
+sudo ip link add pz-rip-bc-b type veth peer name pz-rip-bc-c; sudo ip link set pz-rip-bc-b netns pz-rip-b; sudo ip link set pz-rip-bc-c netns pz-rip-c
+sudo ip -n pz-rip-a addr add 198.18.160.1/30 dev pz-rip-ab-a; sudo ip -n pz-rip-b addr add 198.18.160.2/30 dev pz-rip-ab-b; sudo ip -n pz-rip-b addr add 198.18.160.5/30 dev pz-rip-bc-b; sudo ip -n pz-rip-c addr add 198.18.160.6/30 dev pz-rip-bc-c
+for x in 'a pz-rip-ab-a' 'b pz-rip-ab-b' 'b pz-rip-bc-b' 'c pz-rip-bc-c'; do set -- $x; sudo ip -n pz-rip-$1 link set $2 up; done
+# Synthetic loopback prefixes are the routes that should propagate end to end.
+sudo ip -n pz-rip-a addr add 198.18.161.1/32 dev lo; sudo ip -n pz-rip-c addr add 198.18.163.1/32 dev lo
+cat >$TMP/a.conf <<'EOF'
+router id 198.18.160.1; protocol device { scan time 1; } protocol direct { ipv4; interface "lo"; } protocol rip zoo { ipv4 { import all; export all; }; interface "pz-rip-ab-a" { update time 2; }; }
+EOF
+cat >$TMP/b.conf <<'EOF'
+router id 198.18.160.2; protocol device { scan time 1; } protocol direct { ipv4; interface "pz-rip-ab-b", "pz-rip-bc-b"; } protocol rip zoo { ipv4 { import all; export all; }; interface "pz-rip-ab-b", "pz-rip-bc-b" { update time 2; }; }
+EOF
+cat >$TMP/c.conf <<'EOF'
+router id 198.18.160.6; protocol device { scan time 1; } protocol direct { ipv4; interface "lo"; } protocol rip zoo { ipv4 { import all; export all; }; interface "pz-rip-bc-c" { update time 2; }; }
+EOF
+sudo ip netns exec pz-rip-b timeout 15 tcpdump -U -i any -w $TMP/rip.pcap 'udp port 520' >/dev/null 2>&1 & PIDS="$PIDS $!"
+for n in a b c; do sudo ip netns exec pz-rip-$n timeout 15 /usr/sbin/bird -f -c $TMP/$n.conf -s $TMP/$n.ctl -P $TMP/$n.pid >$TMP/$n.log 2>&1 & PIDS="$PIDS $!"; done
+sleep 8
+sudo ip netns exec pz-rip-a /usr/sbin/birdc -s $TMP/a.ctl 'show route protocol zoo' >$TMP/a.routes
+sudo ip netns exec pz-rip-c /usr/sbin/birdc -s $TMP/c.ctl 'show route protocol zoo' >$TMP/c.routes
+grep -q '198.18.163.1/32' $TMP/a.routes; grep -q '198.18.161.1/32' $TMP/c.routes
+for p in $PIDS; do wait "$p" 2>/dev/null || true; done; PIDS=""
+sudo editcap -F pcapng $TMP/rip.pcap "$ROOT/$OUT/rip-convergence.pcapng"; sudo chown "$(id -u):$(id -g)" "$ROOT/$OUT/rip-convergence.pcapng"
+tshark -r "$ROOT/$OUT/rip-convergence.pcapng" -T fields -E header=y -e frame.number -e ip.src -e ip.dst -e udp.srcport -e udp.dstport -e rip.command -e rip.ip -e rip.metric >"$ROOT/$OUT/rip-convergence.frames.tsv" 2>/dev/null
+frames=$(tshark -r "$ROOT/$OUT/rip-convergence.pcapng" -T fields -e frame.number | wc -l); [ "$frames" -gt 0 ]; tshark -r "$ROOT/$OUT/rip-convergence.pcapng" -Y 'rip' -T fields -e frame.number | grep -q .
+cat >"$ROOT/$OUT/rip-convergence.json" <<EOF
+{"protocol":"rip","experiment":"m12-three-node-rip-netns","evidence_level":"real-capture","environment":{"os":"linux","kernel":"$(uname -r)","topology":"three private namespaces A-B-C","tools":{"bird":"$(/usr/sbin/bird --version 2>&1 | sed -n 1p)","tshark":"$(tshark --version 2>/dev/null | sed -n 1p)"}},"capture_point":"pz-rip-b:any","command":"scripts/era2-rip-capture.sh","capture_filter":"udp port 520","result":{"handshake":"pass","capture":"$OUT/rip-convergence.pcapng","frames":$frames,"route_a_learned":"198.18.163.1/32","route_c_learned":"198.18.161.1/32"},"sanitized":true,"notes":["Three-node RIPv2 propagation used only 198.18.160.0/24-style documentation ranges inside namespaces."]}
+EOF
+jsonschema -i "$ROOT/$OUT/rip-convergence.json" "$ROOT/schemas/experiment.schema.json"
+cleanup; trap - EXIT INT TERM; printf 'M12 RIP convergence: pass (%s frames)\n' "$frames"

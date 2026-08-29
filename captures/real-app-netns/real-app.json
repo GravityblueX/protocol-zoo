@@ -40,5 +40,6 @@
     "FTP username/password were synthetic lab values and are redacted in submitted transcripts; no host account or real data used.",
     "Telnet frame 6 contains inetutils negotiation bytes; FTP frames include USER/PASS/230, EPSV/229, RETR/125/226 and a separate data four-tuple.",
     "Dedicated active-mode capture is captures/real-app-netns/ftp-active.pcapng; EPRT/LIST/226 fields are in ftp-active.frames.tsv."
-  ]
+  ],
+  "evidence_level": "real-capture"
 }

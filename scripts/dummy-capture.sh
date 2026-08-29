@@ -39,6 +39,7 @@ cat > "$ROOT/$RESULT" <<EOF
 {
   "protocol": "dummy-tcp",
   "experiment": "phase-0-netns-harness",
+  "evidence_level": "real-capture",
   "environment": {"os": "linux", "kernel": "$KERNEL", "topology": "netns-veth", "tools": {"tcpdump": "$TCPDUMP", "tshark": "$TSHARK"}},
   "capture_point": "pz-server:pz-veth-s",
   "command": "scripts/dummy-capture.sh",

@@ -25,7 +25,7 @@ wait $sp
 sleep 1; kill -INT $cp 2>/dev/null || true; wait $cp 2>/dev/null || true
 frames=$(tshark -r /root/pz-sctp.pcap -T fields -e frame.number 2>/dev/null | wc -l)
 cat >/root/pz-sctp.json <<EOF
-{"protocol":"sctp","experiment":"phase-6-sctp-netns-kali","environment":{"os":"kali","kernel":"$(uname -r)","topology":"nested-netns-veth","tools":{"tcpdump":"$(tcpdump --version 2>&1 | sed -n 1p)","tshark":"$(tshark --version 2>/dev/null | sed -n 1p)"}},"capture_point":"pz-b:pz-veth-b","command":"/root/pz-sctp.sh","capture_filter":"sctp port 19090","result":{"handshake":"pass","capture":"/root/pz-sctp.pcap","frames":$frames},"sanitized":true,"notes":["SCTP kernel module loaded inside Kali guest.","Nested namespaces used; synthetic payload only; no default route or external interface."]}
+{"protocol":"sctp","experiment":"phase-6-sctp-netns-kali","evidence_level":"real-capture","environment":{"os":"kali","kernel":"$(uname -r)","topology":"nested-netns-veth","tools":{"tcpdump":"$(tcpdump --version 2>&1 | sed -n 1p)","tshark":"$(tshark --version 2>/dev/null | sed -n 1p)"}},"capture_point":"pz-b:pz-veth-b","command":"/root/pz-sctp.sh","capture_filter":"sctp port 19090","result":{"handshake":"pass","capture":"/root/pz-sctp.pcap","frames":$frames},"sanitized":true,"notes":["SCTP kernel module loaded inside Kali guest.","Nested namespaces used; synthetic payload only; no default route or external interface."]}
 EOF
 tshark -r /root/pz-sctp.pcap -q -z io,phs
 cat /root/pz-sctp.json

@@ -1,6 +1,7 @@
 {
   "protocol": "capability-report",
   "experiment": "phase-6-kernel-capability-observation",
+  "evidence_level": "not-run",
   "environment": {
     "os": "linux",
     "kernel": "6.8.0-137-generic",

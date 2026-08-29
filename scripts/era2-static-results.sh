@@ -7,6 +7,7 @@ cat >"$ROOT/$OUT/status.json" <<'EOF'
 {
   "protocol": "era2-static-suite",
   "experiment": "phase-10-to-18-static-boundaries",
+  "evidence_level": "not-run",
   "environment": {"os": "linux", "kernel": "host-observation", "topology": "none", "tools": {"source": "RFC-indexed document reconstruction"}},
   "result": {"handshake": "not_run", "capture": "none", "frames": 0, "m10_rarp_bootp": "document-reconstruction", "m11_slip_ppp": "fixture", "m12_egp": "document-reconstruction", "m13_source_quench": "synthetic-fixture", "m14_netbios": "fixture", "m15_ipv6_transition": "fixture", "m16_ncp": "document-reconstruction", "m17_rlogin": "static", "m18_multicast": "fixture"},
   "sanitized": true,

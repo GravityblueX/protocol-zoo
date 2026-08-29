@@ -1,8 +1,32 @@
 {
   "protocol": "era2-matrix",
   "experiment": "phase-10-to-19-evidence-index",
-  "environment": {"os": "linux", "kernel": "documented", "topology": "none", "tools": {"source": "RFC-indexed research"}},
-  "result": {"handshake": "not_run", "capture": "none", "frames": 0, "m10": "not_run", "m11": "fixture", "m12": "fixture", "m13": "document-reconstruction", "m14": "fixture", "m15": "static", "m16": "document-reconstruction", "m17": "fixture", "m18": "fixture", "m19": "research-complete"},
+  "environment": {
+    "os": "linux",
+    "kernel": "documented",
+    "topology": "none",
+    "tools": {
+      "source": "RFC-indexed research"
+    }
+  },
+  "result": {
+    "handshake": "not_run",
+    "capture": "none",
+    "frames": 0,
+    "m10": "not_run",
+    "m11": "fixture",
+    "m12": "fixture",
+    "m13": "document-reconstruction",
+    "m14": "fixture",
+    "m15": "static",
+    "m16": "document-reconstruction",
+    "m17": "fixture",
+    "m18": "fixture",
+    "m19": "research-complete"
+  },
   "sanitized": true,
-  "notes": ["This is an index, not a packet capture. Individual real captures are indexed by their own JSON results."]
+  "notes": [
+    "This is an index, not a packet capture. Individual real captures are indexed by their own JSON results."
+  ],
+  "evidence_level": "not-run"
 }

@@ -1,20 +1,67 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/tmzncty/protocol-zoo/schema/experiment.schema.json",
-  "title": "Protocol Zoo experiment result",
+  "title": "Protocol Zoo experiment result v2",
   "type": "object",
-  "required": ["protocol", "environment", "result", "notes"],
+  "required": ["protocol", "experiment", "evidence_level", "environment", "result", "sanitized", "notes"],
   "properties": {
     "protocol": {"type": "string", "minLength": 1},
     "experiment": {"type": "string", "minLength": 1},
     "evidence_level": {"enum": ["real-capture", "fixture", "static", "document-reconstruction", "not-run"]},
-    "environment": {"type": "object", "required": ["os", "kernel", "topology"], "properties": {"os": {"type": "string"}, "kernel": {"type": "string"}, "topology": {"type": "string"}, "tools": {"type": "object", "additionalProperties": {"type": "string"}}}, "additionalProperties": true},
+    "environment": {
+      "type": "object",
+      "required": ["os", "kernel", "topology"],
+      "properties": {
+        "os": {"type": "string", "minLength": 1},
+        "kernel": {"type": "string", "minLength": 1},
+        "topology": {"type": "string", "minLength": 1},
+        "tools": {"type": "object", "additionalProperties": {"type": "string"}}
+      },
+      "additionalProperties": true
+    },
     "capture_point": {"type": "string"},
     "command": {"type": "string"},
     "capture_filter": {"type": "string"},
-    "result": {"type": "object", "required": ["handshake", "capture"], "properties": {"handshake": {"enum": ["pass", "fail", "not_run"]}, "capture": {"type": "string"}, "frames": {"type": "integer", "minimum": 0}}, "additionalProperties": true},
-    "sanitized": {"type": "boolean"},
+    "result": {
+      "type": "object",
+      "required": ["handshake", "capture", "frames"],
+      "properties": {
+        "handshake": {"enum": ["pass", "fail", "not_run"]},
+        "capture": {"type": "string", "minLength": 1},
+        "frames": {"type": "integer", "minimum": 0}
+      },
+      "additionalProperties": true
+    },
+    "sanitized": {"const": true},
     "notes": {"type": "array", "items": {"type": "string"}}
   },
-  "additionalProperties": false
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {"properties": {"evidence_level": {"const": "real-capture"}}, "required": ["evidence_level"]},
+      "then": {
+        "required": ["capture_point", "command", "capture_filter"],
+        "properties": {
+          "result": {
+            "properties": {
+              "handshake": {"const": "pass"},
+              "frames": {"type": "integer", "minimum": 1}
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {"properties": {"evidence_level": {"enum": ["static", "document-reconstruction", "not-run"]}}, "required": ["evidence_level"]},
+      "then": {
+        "properties": {
+          "result": {
+            "properties": {
+              "handshake": {"enum": ["not_run", "fail"]}
+            }
+          }
+        }
+      }
+    }
+  ]
 }

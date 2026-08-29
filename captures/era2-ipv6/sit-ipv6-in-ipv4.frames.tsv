@@ -1,0 +1,9 @@
+frame.number	ip.src	ip.dst	ip.proto	ipv6.src	ipv6.dst	icmpv6.type
+1				::	ff02::1:ffab:e1ce	135
+2				::	ff02::1:ff47:cf3e	135
+3				::	ff02::1:ff00:1	135
+4				::	ff02::1:ff00:2	135
+5	198.18.180.1	198.18.180.2	41	2001:db8:181::1	2001:db8:181::2	128
+6	198.18.180.2	198.18.180.1	41	2001:db8:181::2	2001:db8:181::1	129
+7				fe80::8be:1aff:feab:e1ce	ff02::2	133
+8				fe80::ac2b:7aff:fe47:cf3e	ff02::2	133

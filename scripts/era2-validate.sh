@@ -57,4 +57,26 @@ jsonschema -i "$NBNSJ" schemas/experiment.schema.json
 [ "$(jq -r '.result.frames' "$NBNSJ")" -eq "$(tshark -r "$NBNSP" -T fields -e frame.number 2>/dev/null | wc -l)" ]
 tshark -r "$NBNSP" -Y 'nbns' -T fields -e frame.number 2>/dev/null | grep -q .
 
+V6J=captures/era2-ipv6/sit-ipv6-in-ipv4.json
+V6P=captures/era2-ipv6/sit-ipv6-in-ipv4.pcapng
+V6T=captures/era2-ipv6/sit-ipv6-in-ipv4.frames.tsv
+for f in "$V6J" "$V6P" "$V6T"; do [ -s "$f" ] || { echo "missing M15 real-capture evidence: $f" >&2; exit 1; }; done
+jsonschema -i "$V6J" schemas/experiment.schema.json
+[ "$(jq -r '.evidence_level' "$V6J")" = real-capture ]
+[ "$(jq -r '.result.outer_protocol' "$V6J")" -eq 41 ]
+v6d=$(jq -r '.result.frames' "$V6J"); v6a=$(tshark -r "$V6P" -T fields -e frame.number 2>/dev/null | wc -l)
+[ "$v6d" -eq "$v6a" ] && [ "$v6a" -gt 0 ] || { echo "M15 frame mismatch" >&2; exit 1; }
+tshark -r "$V6P" -Y 'ip.proto == 41 && icmpv6' -T fields -e frame.number 2>/dev/null | grep -q .
+
+RIPJ=captures/era2-rip/rip-convergence.json
+RIPP=captures/era2-rip/rip-convergence.pcapng
+RIPT=captures/era2-rip/rip-convergence.frames.tsv
+for f in "$RIPJ" "$RIPP" "$RIPT"; do [ -s "$f" ] || { echo "missing M12 real-capture evidence: $f" >&2; exit 1; }; done
+jsonschema -i "$RIPJ" schemas/experiment.schema.json
+[ "$(jq -r '.evidence_level' "$RIPJ")" = real-capture ]
+ripd=$(jq -r '.result.frames' "$RIPJ"); ripa=$(tshark -r "$RIPP" -T fields -e frame.number 2>/dev/null | wc -l)
+[ "$ripd" -eq "$ripa" ] && [ "$ripa" -gt 0 ] || { echo "M12 frame mismatch" >&2; exit 1; }
+tshark -r "$RIPP" -Y 'rip.command == 2 && rip.ip == 198.18.163.1' -T fields -e frame.number 2>/dev/null | grep -q .
+tshark -r "$RIPP" -Y 'rip.command == 2 && rip.ip == 198.18.161.1' -T fields -e frame.number 2>/dev/null | grep -q .
+
 echo 'second-era validation: pass'

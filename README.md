@@ -38,6 +38,9 @@
 ./scripts/experiment.sh era2-fixtures
 ./scripts/experiment.sh era2-validate
 
+# 私有 IPv6-in-IPv4 transition 实验
+./scripts/experiment.sh era2-ipv6
+
 # 第二纪元安全实验（当前环境可用项；失败项生成 not-run 证据）
 ./scripts/era2-capture.sh
 ```

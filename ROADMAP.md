@@ -204,7 +204,7 @@
 ## M12 — 路由控制面：RIP → EGP → BGP
 
 - [x] RIP/EGP/BGP 历史关系与 count-to-infinity fixture；
-- [ ] 3-node RIP/FRR namespace 收敛实验；
+- [x] 3-node RIP/BIRD namespace 路由传播与收敛实验；
 - [x] 不改宿主路由的控制面安全边界。
 
 ## M13 — ICMP 的灭绝器官
@@ -223,7 +223,7 @@
 
 - [x] 6to4、Teredo、ISATAP、6rd、NAT64/DNS64 来源与死亡压力；
 - [x] 无公网 relay/broker 的静态/fixture 边界；
-- [ ] 私有 IPv6-in-IPv4/IPv6-in-UDP transition 实测。
+- [x] 私有 IPv6-in-IPv4（SIT/protocol 41）实测；IPv6-in-UDP 仍保留扩展。
 
 ## M16 — TCP/IP 之前：ARPANET Host/IMP、NCP、early TCP
 
@@ -247,4 +247,4 @@
 - [x] 隐含世界假设矩阵、来源索引、实验矩阵；
 - [x] M10 新实验补结构化结果、capture、字段索引和清理验证；
 - [x] 第二纪元离线生态骨架与证据矩阵 checkpoint；
-- [ ] PPP/RIP 实验按能力继续推进；NetBIOS/IGMP 已完成。
+- [ ] PPP 实验按能力继续推进；RIP/NetBIOS/IGMP 已完成。
