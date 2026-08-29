@@ -98,11 +98,11 @@
 - [x] NetBIOS/NBNS 真实 namespace 实验；
 - [x] 私有 IPv6-in-IPv4 真实 namespace 实验；
 - [x] RIP 三节点真实 namespace 实验；
-- [ ] 在能力允许时完成 PPP 的真实 PTY 实验；
+- [x] PPP 双端 pppd/private PTY 真实实验；
 - [x] 不可安全/合法复现的项目明确为 static、document-reconstruction 或 not-run；
 - [x] 第二纪元离线数据、fixture、来源和证据矩阵 checkpoint；
 - [x] DHCP/TFTP、ICMP/IGMP、NBNS 真实实验已纳入结构化证据；
-- [ ] PPP 真实链路实验按环境能力继续推进。
+- [x] PPP 真实链路实验完成并纳入三层证据门禁。
 
 ## 每个阶段门禁
 

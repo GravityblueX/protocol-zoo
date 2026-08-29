@@ -79,4 +79,19 @@ ripd=$(jq -r '.result.frames' "$RIPJ"); ripa=$(tshark -r "$RIPP" -T fields -e fr
 tshark -r "$RIPP" -Y 'rip.command == 2 && rip.ip == 198.18.163.1' -T fields -e frame.number 2>/dev/null | grep -q .
 tshark -r "$RIPP" -Y 'rip.command == 2 && rip.ip == 198.18.161.1' -T fields -e frame.number 2>/dev/null | grep -q .
 
+PPPJ=captures/era2-ppp/ppp.json
+[ -s "$PPPJ" ] || { echo "missing M11 PPP result" >&2; exit 1; }
+jsonschema -i "$PPPJ" schemas/experiment.schema.json
+if [ "$(jq -r '.evidence_level' "$PPPJ")" = real-capture ]; then
+  for f in captures/era2-ppp/ppp-icmp.pcapng captures/era2-ppp/ppp-icmp.frames.tsv captures/era2-ppp/serial-hdlc.txt captures/era2-ppp/pppd-a.log captures/era2-ppp/pppd-b.log; do [ -s "$f" ] || { echo "missing PPP evidence: $f" >&2; exit 1; }; done
+  [ "$(jq -r '.result.frames' "$PPPJ")" -eq "$(tshark -r captures/era2-ppp/ppp-icmp.pcapng -T fields -e frame.number 2>/dev/null | wc -l)" ]
+  grep -Eq 'local +IP address 198.18.170.1' captures/era2-ppp/pppd-a.log
+  grep -Eq 'local +IP address 198.18.170.2' captures/era2-ppp/pppd-b.log
+  grep -Eqi 'c0 21' captures/era2-ppp/serial-hdlc.txt
+  grep -Eqi '80 21' captures/era2-ppp/serial-hdlc.txt
+  grep -Eqi '7e 21' captures/era2-ppp/serial-hdlc.txt
+  tshark -r captures/era2-ppp/ppp-icmp.pcapng -Y 'icmp.type == 8' -T fields -e frame.number 2>/dev/null | grep -q .
+  tshark -r captures/era2-ppp/ppp-icmp.pcapng -Y 'icmp.type == 0' -T fields -e frame.number 2>/dev/null | grep -q .
+fi
+
 echo 'second-era validation: pass'

@@ -6,7 +6,7 @@
 
 ## 当前状态
 
-实验基础设施和 M0–M9 第一纪元展品已完成；Telnet、FTP、SCTP、UDP-Lite、GRE 与 IP-in-IP 已有成熟实现或内核的隔离实测。第二纪元 M10–M19 的生态路线、数据集、研究矩阵和安全边界已建立，M10 DHCP→TFTP 启动链现有真实 namespace 抓包；尚未成功的项目明确保留为 `fixture`、`static`、`document-reconstruction` 或 `not-run`。仓库优先记录可复现、可审查的实验；没有在当前环境真实跑通的协议，会明确标为 `fixture`、`static` 或 `not-run`，不把推导冒充实测。
+实验基础设施和 M0–M9 第一纪元展品已完成；Telnet、FTP、SCTP、UDP-Lite、GRE 与 IP-in-IP 已有成熟实现或内核的隔离实测。第二纪元 M10–M19 的生态路线、数据集、研究矩阵和安全边界已建立；DHCP→TFTP、PPP、RIP、ICMP、NBNS、私有 IPv6-in-IPv4 与 IGMP 均有隔离真实证据，不能合法或安全实测的子项明确保留为 `fixture`、`static`、`document-reconstruction` 或 `not-run`。仓库优先记录可复现、可审查的实验；没有在当前环境真实跑通的协议，会明确标为 `fixture`、`static` 或 `not-run`，不把推导冒充实测。
 
 | 区域 | 展品 | 状态 |
 |---|---|---|
@@ -40,6 +40,9 @@
 
 # 私有 IPv6-in-IPv4 transition 实验
 ./scripts/experiment.sh era2-ipv6
+./scripts/experiment.sh era2-rip
+./scripts/experiment.sh era2-ppp
+./scripts/experiment.sh era2-network
 
 # 第二纪元安全实验（当前环境可用项；失败项生成 not-run 证据）
 ./scripts/era2-capture.sh

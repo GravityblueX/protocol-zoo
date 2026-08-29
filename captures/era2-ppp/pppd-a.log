@@ -1,0 +1,13 @@
+Using interface ppp0
+Connect: ppp0 <--> /tmp/pz-m11.PdhKJp/pty-a
+Deflate (15) compression enabled
+local  IP address 198.18.170.1
+remote IP address 198.18.170.2
+local  LL address fe80::a11b:6ae8:bffa:895a
+remote LL address fe80::9d65:7f33:3116:8971
+Modem hangup
+Connect time 0.2 minutes.
+Sent 264 bytes, received 264 bytes.
+Connection terminated.
+Connect time 0.2 minutes.
+Sent 264 bytes, received 264 bytes.

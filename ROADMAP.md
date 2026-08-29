@@ -198,7 +198,7 @@
 
 - [x] RFC 1055/1144/1661/1334/1994 来源与 framing/协商分析；
 - [x] SLIP/PPP 离线 framing 与 LCP/PAP/IPCP fixture；
-- [ ] pppd over private PTY 的真实抓包；
+- [x] pppd over private PTY：LCP/IPCP、async-HDLC 原始字节与 ppp0 ICMP 三层真实证据；
 - [x] 低速链路成本与现代替代分析。
 
 ## M12 — 路由控制面：RIP → EGP → BGP
@@ -233,7 +233,7 @@
 ## M17 — 信任局域网：rlogin / rsh / rexec → SSH
 
 - [x] RFC 1282 与 trusted-host 演化研究；
-- [ ] 私有 namespace rlogin/rsh/rexec 实测（有成熟实现才做）；
+- [x] 成熟 rlogin/rsh daemon 私有高端口 probe；TCP 建连但认证/终端链未成功，保留 static/fixture；
 - [x] 合成凭据与明文安全边界。
 
 ## M18 — 多播与 MBONE
@@ -247,4 +247,4 @@
 - [x] 隐含世界假设矩阵、来源索引、实验矩阵；
 - [x] M10 新实验补结构化结果、capture、字段索引和清理验证；
 - [x] 第二纪元离线生态骨架与证据矩阵 checkpoint；
-- [ ] PPP 实验按能力继续推进；RIP/NetBIOS/IGMP 已完成。
+- [x] PPP/RIP/NetBIOS/IGMP 实验已按证据门禁完成。
