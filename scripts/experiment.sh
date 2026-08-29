@@ -11,6 +11,10 @@ usage: scripts/experiment.sh {fixtures|validate|capture|real-app|sctp|remaining|
   real-app       run mature Telnet/FTP implementations in netns
   sctp           run real SCTP inside isolated Kali nested namespaces
   remaining      run UDP-Lite, GRE, IP-in-IP and DCCP capability tests
+  era2-fixtures  regenerate M10-M19 offline fixtures
+  era2-capture   run the real M10 DHCP-to-TFTP boot chain in a private /24
+  era2-static    regenerate structured static/not-run boundaries
+  era2-validate  require and verify M10 real-capture evidence
   capabilities   record observational kernel/tool capability evidence
   clean          teardown Protocol Zoo namespaces
 EOF

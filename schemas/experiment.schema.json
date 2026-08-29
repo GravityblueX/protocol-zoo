@@ -7,6 +7,7 @@
   "properties": {
     "protocol": {"type": "string", "minLength": 1},
     "experiment": {"type": "string", "minLength": 1},
+    "evidence_level": {"enum": ["real-capture", "fixture", "static", "document-reconstruction", "not-run"]},
     "environment": {"type": "object", "required": ["os", "kernel", "topology"], "properties": {"os": {"type": "string"}, "kernel": {"type": "string"}, "topology": {"type": "string"}, "tools": {"type": "object", "additionalProperties": {"type": "string"}}}, "additionalProperties": true},
     "capture_point": {"type": "string"},
     "command": {"type": "string"},

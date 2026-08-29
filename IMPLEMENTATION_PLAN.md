@@ -93,7 +93,8 @@
 - [x] `datasets/era2.csv`；
 - [x] `research/second-era-natural-history.md`、`era2-sources.md`、`era2-experiment-matrix.md`、`pre-ip-ncp.md`；
 - [x] M10–M19 离线 fixtures；
-- [ ] 在能力允许时完成 DHCP/TFTP、PPP、RIP、NetBIOS、IGMP 的真实 namespace 实验；
+- [x] DHCP/TFTP 真实 namespace 实验；
+- [ ] 在能力允许时完成 PPP、RIP、NetBIOS、IGMP 的真实 namespace 实验；
 - [x] 不可安全/合法复现的项目明确为 static、document-reconstruction 或 not-run；
 - [x] 第二纪元离线数据、fixture、来源和证据矩阵 checkpoint；
 - [ ] 第二纪元真实应用/链路实验按环境能力继续推进。

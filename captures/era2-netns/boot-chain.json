@@ -1,0 +1,12 @@
+{
+  "protocol": "dhcp+tftp",
+  "experiment": "m10-boot-chain-netns",
+  "evidence_level": "real-capture",
+  "environment": {"os": "linux", "kernel": "6.8.0-137-generic", "topology": "dedicated /24 netns-veth", "tools": {"dnsmasq": "Dnsmasq version 2.90  Copyright (c) 2000-2024 Simon Kelley", "dhclient": "isc-dhclient-4.4.3-P1", "tftp": "Usage: tftp [-4][-6][-v][-l][-m mode] [host [port]] [-c command]", "tshark": "TShark (Wireshark) 4.2.2 (Git v4.2.2 packaged as 4.2.2-1.1build3)."}},
+  "capture_point": "pz-m10-server:pz-m10-s",
+  "command": "scripts/era2-capture.sh",
+  "capture_filter": "udp port 67 or udp port 68 or udp port 69",
+  "result": {"handshake": "pass", "capture": "captures/era2-netns/boot-chain.pcapng", "frames": 7, "dhcp": "pass", "tftp": "pass", "leased_address": "198.18.50.13", "boot_file": "boot.img"},
+  "sanitized": true,
+  "notes": ["Client began without IPv4, completed DISCOVER/OFFER/REQUEST/ACK, then retrieved synthetic boot.img using TFTP RRQ/DATA/ACK.", "All traffic remained on 198.18.50.0/24 inside dedicated namespaces."]
+}

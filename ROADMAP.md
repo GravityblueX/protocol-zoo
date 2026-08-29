@@ -189,9 +189,9 @@
 
 ## M10 — 开机之前：RARP → BOOTP → DHCP → TFTP
 
-- [ ] 空地址客户端到地址发现与启动文件获取的完整链；
+- [x] 空地址客户端到地址发现与启动文件获取的完整链；
 - [x] RFC/历史关系与离线启动链 fixture；
-- [ ] dnsmasq/成熟 DHCP-TFTP 在独立 namespace 实测；
+- [x] dnsmasq/dhclient/TFTP 在独立 `/24` namespace 实测；
 - [x] RARP/BOOTP 的不可行真实条件与证据边界记录。
 
 ## M11 — 电话线时代：SLIP / CSLIP / PPP
@@ -245,6 +245,6 @@
 ## M19 — 比较研究设施
 
 - [x] 隐含世界假设矩阵、来源索引、实验矩阵；
-- [ ] 每个新实验均补结构化结果、capture、字段索引和清理验证；
+- [x] M10 新实验补结构化结果、capture、字段索引和清理验证；
 - [x] 第二纪元离线生态骨架与证据矩阵 checkpoint；
-- [ ] 真实 DHCP/PPP/RIP/NetBIOS/IGMP 实验按能力继续推进。
+- [ ] PPP/RIP/NetBIOS/IGMP 实验按能力继续推进。

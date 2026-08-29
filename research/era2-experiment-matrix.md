@@ -2,7 +2,7 @@
 
 | M | 展品 | 计划入口 | 当前证据 | 安全收口 |
 |---|---|---|---|---|
-| M10 | RARP/BOOTP/DHCP/TFTP | `era2-fixtures`; `era2-capture.sh` | dnsmasq/TFTP 已在 namespace 尝试；DHCP 与 TFTP 分项写入结构化结果 | 不接 host DHCP，不写默认配置 |
+| M10 | RARP/BOOTP/DHCP/TFTP | `era2-fixtures`; `era2-capture.sh` | 专用 `/24` namespace 已完成 DISCOVER/OFFER/REQUEST/ACK → TFTP RRQ/DATA/ACK | 不接 host DHCP，不写默认配置 |
 | M11 | SLIP/CSLIP/PPP | `captures/fixtures/era2/ppp.txt`; guest `pppd`/pty | fixture/static；串行 pty 受权限与实现约束 | 不碰宿主串口 |
 | M12 | RIP/EGP | bird/FRR nested namespaces | static/fixture；RIP 可用本地 daemon 时再实测 | 不改宿主路由 |
 | M13 | ICMP Source Quench | `captures/fixtures/era2/icmp-lifecycle.txt` | document reconstruction/static；Source Quench 不应由现代端系统依赖 | 不向外部主机发包 |
