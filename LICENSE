@@ -1,14 +1,25 @@
-Creative Commons Attribution 4.0 International (CC BY 4.0)
+Licensing
 
 Copyright (c) 2026 tmzncty and contributors
 
-Except where otherwise noted, original prose, diagrams, tables, project documentation, and original data authored for this repository are licensed under the Creative Commons Attribution 4.0 International Public License (CC BY 4.0).
+This repository contains several kinds of material, so licensing is applied by scope rather than by treating every stored artifact as if it had the same copyright status.
 
-You may share and adapt the licensed material for any purpose, including commercial use, provided that you give appropriate credit, provide a link to the license, and indicate whether changes were made.
+## Source code and scripts
 
-Full license text:
+Source code, scripts, build files, schemas where copyright applies, and other software authored for this repository are licensed under the MIT License. See `LICENSE-MIT`.
+
+SPDX-License-Identifier: MIT
+
+## Original research and documentation
+
+Except where otherwise noted, original prose, diagrams, tables, project documentation, annotations, and original data authored for this repository are licensed under the Creative Commons Attribution 4.0 International Public License (CC BY 4.0):
+
 https://creativecommons.org/licenses/by/4.0/legalcode
 
-Third-party quotations, images, scans, standards excerpts, archival materials, datasets, trademarks, and other material not authored by this repository's contributors are not relicensed by this notice and remain subject to their original copyright, license, public-domain status, or other applicable terms.
-
 SPDX-License-Identifier: CC-BY-4.0
+
+## Third-party and historical material
+
+Protocol specifications and standards excerpts, quotations, packet captures containing third-party material, archival documents, images, scans, trademarks, externally sourced datasets, and other material not authored by this repository's contributors are not relicensed by this notice. They remain subject to their original copyright, license, public-domain status, fair-use/fair-dealing basis, or other applicable terms.
+
+Where an individual file or directory carries a more specific rights notice, that notice takes precedence for that material.
