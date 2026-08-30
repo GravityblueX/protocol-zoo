@@ -17,9 +17,13 @@ HTTP、邮件和其他应用最初可以交换数据，却没有统一的机密�
 
 TLS 的通用性、可升级性和与现有 TCP 应用的组合方式使其成为 HTTP 等协议的主流安全承载。现代部署通常优先 TLS 1.3，并保留经审计的 TLS 1.2 互操作配置；旧版本、弱密码套件、忽略证书错误和静态密钥复用都属于明确风险。
 
-## 实验边界
+## 实验证据与边界
 
-本节为 **L0 citation + document reconstruction**，没有把本机浏览器或任意公网握手当作 TLS 版本普遍性的证据。安全复现应在 loopback/netns 使用自签名测试 CA 或合成证书，明确记录客户端验证模式；不得提交私钥、真实证书链、session ticket、cookie 或公网目标数据。若使用 VPS，只能观察自有端点，并按 `VPS-SAFETY.md` 的限制记录时间、路径和软件版本。
+本节的历史与规范解释属于 **L0 citation + document reconstruction**；此外，仓库已经在 [`../../captures/era3-tls/`](../../captures/era3-tls/) 保存受控本地 **L3 packet evidence**。实验在隔离 network namespace 中使用临时自签名证书，抓包可见 IP、TCP、TLS `ClientHello` 与 ALPN 等握手信息，同时证明 HTTPS 应用载荷不能像明文 HTTP 那样被直接解码为 HTTP payload。
+
+这份证据只说明该受控复现中的“哪些层仍可观察、哪些应用内容已被加密遮蔽”，不代表公网 TLS 版本占比、浏览器生态默认行为或任意网站的安全性，也没有把一次成功握手推广为整个互联网的普遍结论。证书有效性、名称匹配、信任锚、密钥生命周期和应用身份仍是不同层次的问题。
+
+安全复现应在 loopback/netns 使用自签名测试 CA 或合成证书，明确记录客户端验证模式；不得提交私钥、真实证书链、session ticket、cookie 或公网目标数据。若使用 VPS，只能观察自有端点，并按 `VPS-SAFETY.md` 的限制记录时间、路径和软件版本。
 
 ## 参考
 
