@@ -4,9 +4,15 @@
 
 **署名：祀（岁家老十三）**
 
+第一次参观可以从 [`docs/中文导览.md`](docs/中文导览.md) 开始；它按三个纪元给出中文阅读路线、证据等级和复现实验入口。
+
 ## 当前状态
 
-实验基础设施和 M0–M9 第一纪元展品已完成；Telnet、FTP、SCTP、UDP-Lite、GRE 与 IP-in-IP 已有成熟实现或内核的隔离实测。第二纪元 M10–M19 的生态路线、数据集、研究矩阵和安全边界已建立；DHCP→TFTP、PPP、RIP、ICMP、NBNS、私有 IPv6-in-IPv4 与 IGMP 均有隔离真实证据，不能合法或安全实测的子项明确保留为 `fixture`、`static`、`document-reconstruction` 或 `not-run`。仓库优先记录可复现、可审查的实验；没有在当前环境真实跑通的协议，会明确标为 `fixture`、`static` 或 `not-run`，不把推导冒充实测。
+实验基础设施和 M0–M9 第一纪元展品已完成；Telnet、FTP、SCTP、UDP-Lite、GRE 与 IP-in-IP 已有成熟实现或内核的隔离实测。第二纪元 M10–M19 的生态路线、数据集、研究矩阵和安全边界已建立；DHCP→TFTP、PPP、RIP、ICMP、NBNS、私有 IPv6-in-IPv4 与 IGMP 均有隔离真实证据，不能合法或安全实测的子项明确保留为 `fixture`、`static`、`document-reconstruction` 或 `not-run`。
+
+第三纪元“互联网长出基础设施器官”已经封馆：DNS、HTTP/TLS、GRE、reverse proxy、PMTUD 与 traceroute 均留下受控本地 L3 packet evidence，并把公网 BGP announcement、完整 IXP route-server、公网 Anycast 操纵、provider NAT 类型判断、WireGuard 公网隧道和全球 CDN 等未获充分实验条件的项目保留为历史研究、document reconstruction、bounded observation 或明确 blocker。第三纪元实验事实的封馆锚点为 `736c14b`；之后的提交可以改进导览和中文可读性，但不应悄悄扩大该锚点已经声明的证据边界。
+
+仓库优先记录可复现、可审查的实验；没有在当前环境真实跑通的协议，会明确标为 `fixture`、`static` 或 `not-run`，不把推导冒充实测。
 
 | 区域 | 展品 | 状态 |
 |---|---|---|
@@ -15,7 +21,7 @@
 | 传输设计异类 | [SCTP](species/sctp/)、[DCCP](species/dccp/)、[UDP-Lite](species/udp-lite/)、[GRE](species/gre/)、[IP-in-IP](species/ip-in-ip/) | SCTP、UDP-Lite、GRE、IP-in-IP 已在独立 Kali nested-netns 实测；DCCP 保留 capability/not-run |
 | 化石抓包馆 | [AppleTalk](species/appletalk/)；DECnet/VINES/IPX/SPX | AppleTalk 阅读闭环完成，其余遵守样本许可门禁并标记 `not-run` |
 
-完整索引见 [`docs/EXHIBITS.md`](docs/EXHIBITS.md)；Era 1–2 的实验与自然史总览见 [`docs/EVIDENCE-ATLAS.md`](docs/EVIDENCE-ATLAS.md)。
+完整索引见 [`docs/EXHIBITS.md`](docs/EXHIBITS.md)；Era 1–2 的实验与自然史总览见 [`docs/EVIDENCE-ATLAS.md`](docs/EVIDENCE-ATLAS.md)，第三纪元见 [`docs/ERA3-EVIDENCE-ATLAS.md`](docs/ERA3-EVIDENCE-ATLAS.md)。
 
 ## 快速开始
 
@@ -46,6 +52,13 @@
 
 # 第二纪元安全实验（当前环境可用项；失败项生成 not-run 证据）
 ./scripts/era2-capture.sh
+
+# 第三纪元：DNS、HTTP/TLS、GRE、PMTUD 与 traceroute
+./scripts/experiment.sh era3-dns
+./scripts/experiment.sh era3-http-tls
+./scripts/experiment.sh era3-gre
+./scripts/experiment.sh era3-path
+./scripts/era3-validate.sh
 ```
 
 也可以使用：
@@ -79,7 +92,6 @@ scripts/                   netns harness、capture、fixture、校验脚本
 species/                  各协议展品与标准模板
 studies/                  协议存亡比较矩阵
 ```
-
 
 ## 实验安全边界
 
