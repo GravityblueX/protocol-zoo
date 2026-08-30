@@ -31,6 +31,14 @@ H. The End-to-End Principle Under Pressure  · TLS、终止点与责任边界
 
 ## 证据等级
 
-`L0` citation；`L1` fixture；`L2` executable local reproduction；`L3` local packet evidence；`L4` controlled real-WAN evidence；`L5` external corroboration。使用 VPS 不自动提高等级。本次 HTTP/TLS/TUNNELS/END-TO-END 专题新增材料为 `L0` 与比较性整理；数据中的 `not-run` 是有意的证据边界，不是遗漏。
+`L0` citation；`L1` fixture；`L2` executable local reproduction；`L3` local packet evidence；`L4` controlled real-WAN evidence；`L5` external corroboration。使用 VPS 不自动提高等级。
 
-机器可读索引见 [`../../data/era3/protocols.json`](../../data/era3/protocols.json)、[`../../data/era3/survival-matrix.json`](../../data/era3/survival-matrix.json) 与 [`../../data/era3/evidence.json`](../../data/era3/evidence.json)。M18–M33 本轮 observation ledger 见 [`../../research/data/era3-observations.md`](../../research/data/era3-observations.md) 与 `.json`；其中 `local`、`wan`、`inference` 是分开的来源标签。
+第三纪元封馆时已经形成多组受控本地 L3 证据：DNS delegation/glue/递归与缓存、HTTP/1.0 与 HTTP/1.1 连接可见性、TLS `ClientHello`/ALPN 与加密后的应用不可见性、GRE 内外层封装、reverse proxy 的两条独立 TCP legs、PMTUD 的 ICMP fragmentation-needed/MTU 1400，以及已知 ground truth 中的 UDP/ICMP traceroute。对应入口见 [`../ERA3-EVIDENCE-ATLAS.md`](../ERA3-EVIDENCE-ATLAS.md)。
+
+这些证据不会被扩张成没有做过的公网结论。公网 BGP announcement、完整 IXP route-server、公网 Anycast 操纵、provider NAT 类型判断、WireGuard 公网隧道、全球 CDN，以及 NAT/firewall/LB/cache 的全部 packet-level 子实验，仍按实际条件保留为历史研究、document reconstruction、bounded observation、`not-run` 或明确 blocker。
+
+## 封馆状态
+
+第三纪元实验事实的封馆锚点为 `736c14b`。该锚点之后允许继续修正文档、中文导览、索引和勘误，但不能在没有新证据与新边界声明的情况下，把后续文字修改解释成第三纪元已经完成新的实验事实。
+
+机器可读封馆状态见 [`../../data/era3/status.json`](../../data/era3/status.json)。机器可读索引另见 [`../../data/era3/protocols.json`](../../data/era3/protocols.json)、[`../../data/era3/survival-matrix.json`](../../data/era3/survival-matrix.json) 与 [`../../data/era3/evidence.json`](../../data/era3/evidence.json)。M18–M33 observation ledger 见 [`../../research/data/era3-observations.md`](../../research/data/era3-observations.md) 与 `.json`；其中 `local`、`wan`、`inference` 是分开的来源标签。
