@@ -18,9 +18,13 @@
 
 HTTP 的持久性来自清晰的资源/表示/缓存边界、代理可组合性、可观察的状态码，以及对传输层的逐步替换。HTTP/1.1 仍是互操作基线；HTTP/2、HTTP/3 主要改变 framing 与连接管理，而不是抛弃 HTTP 语义。反向代理、API、对象存储和 CDN 也说明 HTTP 已从“取 HTML”扩展为通用应用接口。
 
-## 实验边界
+## 实验证据与边界
 
-本仓本节是 **L0 citation + document reconstruction**，不是公网 HTTP 性能结论，也没有声称仓库已有 HTTP 抓包。安全的后续复现应使用 loopback 或专用 namespace 的成熟 server/client，过滤器只保留目标五元组；不得向公网暴露临时服务、提交真实 cookie 或凭据。HTTP 明文本身不提供机密性、完整性或服务器身份认证，这些性质由 TLS/应用认证另行提供。
+本节的历史解释仍属于 **L0 citation + document reconstruction**；此外，仓库已经在 [`../../captures/era3-http/`](../../captures/era3-http/) 保存受控本地 **L3 packet evidence**。该实验在隔离 network namespace 中使用成熟客户端/服务端，实际抓到 HTTP/1.0 与 HTTP/1.1 请求、`Host`、明文应用 payload，并显示两次独立客户端调用落在不同的 TCP stream 中。
+
+这些抓包只证明该受控现代复现中的协议可见性和连接事实，不代表历史浏览器工作负载，不代表公网 HTTP 性能或部署比例，也没有声称完成 pipelining、chunked transfer、HTTP/2 或 HTTP/3 的 packet-level 子实验。HTTPS 的可见性边界另见 [`TLS.md`](TLS.md) 与 [`../../captures/era3-tls/`](../../captures/era3-tls/)：TLS 建立后不能把加密应用载荷直接解码成明文 HTTP。
+
+安全复现仍应使用 loopback 或专用 namespace 的成熟 server/client，过滤器只保留目标五元组；不得向公网暴露临时服务、提交真实 cookie 或凭据。HTTP 明文本身不提供机密性、完整性或服务器身份认证，这些性质由 TLS/应用认证另行提供。
 
 ## 参考
 
