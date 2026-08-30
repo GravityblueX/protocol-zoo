@@ -18,9 +18,13 @@
 
 隧道持续存在，因为管理边界与物理拓扑不总能同步：云网络、运营商承载、站点互联、IPv6 过渡和数据中心 overlay 都需要逻辑拓扑。主导实现按场景分化，而非一种隧道淘汰全部其他隧道。
 
-## 实验边界
+## 实验证据与边界
 
-本节为 **L0 citation + document reconstruction**；仓库既有 Era 2 的私有 SIT/protocol-41 与 GRE/IP-in-IP 资料不能自动证明 Era 3 的公网可达性或性能。后续实验只允许私有 namespace/veth、明确的 capture point 和可清理的路由；不修改宿主默认路由、不接入生产 overlay、不扫描第三方、不把未经加密的 GRE 描述成 VPN。必须记录内层/外层地址、MTU、封装协议号与 cleanup 结果。
+本节的历史谱系属于 **L0 citation + document reconstruction**；此外，第三纪元已经在 [`../../captures/era3-tunnels/`](../../captures/era3-tunnels/) 保存受控本地 **GRE L3 packet evidence**。实验明确区分外层与内层：outer `198.18.220.1 ↔ 198.18.220.2`，inner `198.18.221.1 ↔ 198.18.221.2`；pcap 同时显示 IPv4 protocol 47 的 GRE 外层和被封装的 ICMP 内层流量。
+
+这份证据证明的是“网络包可以作为另一个网络包的载荷，并由不同地址空间分别承担外层传输与内层通信”，不证明 GRE 具有加密或认证性质，也不代表公网 GRE 可达性、吞吐或 provider 策略。仓库既有 Era 2 的私有 SIT/protocol-41 与 GRE/IP-in-IP 资料同样不能自动升级为公网结论；WireGuard 公网隧道仍保留为明确未闭环边界。
+
+复现实验只允许私有 namespace/veth、明确的 capture point 和可清理的路由；不修改宿主默认路由、不接入生产 overlay、不扫描第三方、不把未经加密的 GRE 描述成 VPN。必须记录内层/外层地址、MTU、封装协议号与 cleanup 结果。
 
 ## 参考
 
