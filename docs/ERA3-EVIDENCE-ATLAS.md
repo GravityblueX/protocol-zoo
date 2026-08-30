@@ -1,4 +1,4 @@
-# Era 3 Evidence Atlas — The Internet Grows Organs
+# 第三纪元证据图谱：互联网长出基础设施器官（Era 3 Evidence Atlas）
 
 这张图按互联网器官的形成顺序组织证据，不把文献重建、本地实验和公网观察混写。
 

@@ -28,6 +28,8 @@ grep -q '198.18.240.1' captures/era3-traceroute/traceroute-udp.txt
 grep -q '198.18.240.6' captures/era3-traceroute/traceroute-icmp.txt
 ! tshark -r captures/era3-tls/https.pcapng -Y 'http' -T fields -e frame.number | grep -q .
 for f in docs/era3/*.md; do [ -s "$f" ] || { echo "empty Era 3 doc: $f" >&2; exit 1; }; ! grep -Eq 'TODO|TBD|PLACEHOLDER' "$f" || { echo "placeholder in $f" >&2; exit 1; }; done
+[ -s docs/中文导览.md ] || { echo 'missing Chinese guide' >&2; exit 1; }
+! grep -Eq 'TODO|TBD|PLACEHOLDER' docs/中文导览.md || { echo 'placeholder in Chinese guide' >&2; exit 1; }
 jq empty data/era3/*.json 2>/dev/null || true
 ! ip netns list | grep -q '^pz-era3-' || { echo 'Era 3 namespace residue' >&2; exit 1; }
 ! grep -RIlE 'BEGIN (OPENSSH |RSA |EC )?PRIVATE KEY' docs experiments captures data scripts >/dev/null || { echo 'private key leak' >&2; exit 1; }

@@ -1,6 +1,6 @@
 # Protocol Zoo Evidence Atlas
 
-这是一张从入口到证据的导航图，不替代各展品的 RFC、实验日志或结构化结果。第三纪元独立导览见 [`ERA3-EVIDENCE-ATLAS.md`](ERA3-EVIDENCE-ATLAS.md)。
+这是一张从入口到证据的中文导航图，不替代各展品的 RFC、实验日志或结构化结果。中文总导览见 [`中文导览.md`](中文导览.md)；第三纪元独立导览见 [`ERA3-EVIDENCE-ATLAS.md`](ERA3-EVIDENCE-ATLAS.md)。
 
 ## 沿着网络世界的生长顺序
 

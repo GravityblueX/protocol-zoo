@@ -1,4 +1,4 @@
-# Era 3 — The Internet Grows Organs
+# 第三纪元：互联网长出基础设施器官（The Internet Grows Organs）
 
 核心问题：一个强调端到端主机通信的网络，如何长出命名、自治、政策路由、中间盒、缓存、交换、分发、隧道与控制平面。
 
