@@ -52,6 +52,7 @@ printf '%s\n' \
   > "$TMP/bin/dirname"
 chmod +x "$TMP/bin/dirname"
 SH=$(command -v sh)
+REALPATH_BIN=$(command -v realpath)
 
 if output=$(PATH="$TMP/bin" "$SH" "$TMP/repo/scripts/era3-validate.sh" 2>&1); then
   echo 'Era 3 validator accepted an unverifiable namespace cleanup check' >&2
@@ -81,8 +82,7 @@ printf '%s\n' "$output" | grep -Fq \
 # Lexical `..`/absolute-path checks do not catch a repository path that is a
 # symlink to an external file. Resolve the path before checking containment.
 printf 'outside fixture\n' > "$TMP/outside-evidence"
-ln -s "$TMP/outside-evidence" \
-  "$TMP/repo/captures/era3-dns/external-evidence"
+link_path="$TMP/repo/captures/era3-dns/external-evidence"
 printf '%s\n' \
   '#!/bin/sh' \
   'if [ "$1" = -r ] && [ "$2" = ".files[]" ] && [ "${3##*/}" = evidence.json ]; then' \
@@ -92,12 +92,53 @@ printf '%s\n' \
   > "$TMP/bin/jq"
 chmod +x "$TMP/bin/jq"
 
-if output=$(PATH="$TMP/bin:$PATH" "$SH" "$TMP/repo/scripts/era3-validate.sh" 2>&1); then
-  echo 'Era 3 validator accepted a symlink that escaped the repository' >&2
+if ln -s "$TMP/outside-evidence" "$link_path" 2>/dev/null && [ -L "$link_path" ]; then
+  if output=$(PATH="$TMP/bin:$PATH" "$SH" "$TMP/repo/scripts/era3-validate.sh" 2>&1); then
+    echo 'Era 3 validator accepted a symlink that escaped the repository' >&2
+    exit 1
+  fi
+  printf '%s\n' "$output" | grep -Fq \
+    'evidence path escapes repository: captures/era3-dns/external-evidence'
+else
+  printf '%s\n' \
+    'SKIP: real symlink escape regression (platform cannot create symbolic links)'
+fi
+rm -f "$link_path"
+
+# Exercise the canonical containment decision on every platform, including
+# Git Bash installations where `ln -s` silently creates a regular file.
+printf 'inside placeholder\n' \
+  > "$TMP/repo/captures/era3-dns/canonical-escape"
+printf '%s\n' \
+  '#!/bin/sh' \
+  'if [ "$1" = -r ] && [ "$2" = ".files[]" ] && [ "${3##*/}" = evidence.json ]; then' \
+  '  case "$3" in *era3-dns/*) printf "captures/era3-dns/canonical-escape\n" ;; esac' \
+  'fi' \
+  'exit 0' \
+  > "$TMP/bin/jq"
+chmod +x "$TMP/bin/jq"
+printf '%s\n' \
+  '#!/bin/sh' \
+  'if [ "${3-}" = captures/era3-dns/canonical-escape ]; then' \
+  '  printf "%s\n" "$REALPATH_OUTSIDE"' \
+  'else' \
+  '  exec "$REALPATH_BIN" "$@"' \
+  'fi' \
+  > "$TMP/bin/realpath"
+chmod +x "$TMP/bin/realpath"
+
+if output=$(
+  REALPATH_BIN="$REALPATH_BIN" \
+  REALPATH_OUTSIDE="$TMP/outside-evidence" \
+  PATH="$TMP/bin:$PATH" \
+  "$SH" "$TMP/repo/scripts/era3-validate.sh" 2>&1
+); then
+  echo 'Era 3 validator accepted a canonically external evidence path' >&2
   exit 1
 fi
 printf '%s\n' "$output" | grep -Fq \
-  'evidence path escapes repository: captures/era3-dns/external-evidence'
+  'evidence path escapes repository: captures/era3-dns/canonical-escape'
+rm -f "$TMP/bin/realpath"
 
 # Finding an `ip` executable is not enough: a failed namespace query must not
 # be mistaken for an empty namespace list by a negated pipeline.
