@@ -1,18 +1,38 @@
 #!/bin/sh
 set -eu
 ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd); cd "$ROOT"
+EVIDENCE_FILES='
+captures/era3-dns/evidence.json
+captures/era3-http/evidence.json
+captures/era3-tls/evidence.json
+captures/era3-tunnels/evidence.json
+captures/era3-proxy/evidence.json
+captures/era3-pmtud/evidence.json
+captures/era3-traceroute/evidence.json
+'
+
+# Era 3 is closed around these seven evidence records. Do not silently pass
+# when a descriptor disappears while its packet/text artifacts remain.
+for f in $EVIDENCE_FILES; do
+  [ -s "$f" ] || { echo "missing Era 3 evidence descriptor: $f" >&2; exit 1; }
+done
+
 command -v jq >/dev/null; command -v jsonschema >/dev/null; command -v tshark >/dev/null
-jsonschema -i schemas/era3/evidence.schema.json schemas/era3/evidence.schema.json >/dev/null 2>&1 || jq empty schemas/era3/evidence.schema.json
-count=0
-find captures -path '*/era3-*/*.json' -type f -print | sort | while read -r f; do
-  case "$f" in *era3-dns/evidence.json|*era3-http/evidence.json|*era3-tls/evidence.json|*era3-tunnels/evidence.json|*era3-proxy/evidence.json|*era3-pmtud/evidence.json|*era3-traceroute/evidence.json) ;; *) continue ;; esac
+jq empty schemas/era3/evidence.schema.json
+for f in $EVIDENCE_FILES; do
   jsonschema -i "$f" schemas/era3/evidence.schema.json
   jq -e '.era==3 and .bounded==true and .cleanup_verified==true' "$f" >/dev/null
-  jq -r '.files[]' "$f" | while read -r p; do [ -e "$p" ] || { echo "missing declared evidence: $p ($f)" >&2; exit 1; }; done
+  jq -r '.files[]' "$f" | while read -r p; do
+    case "$p" in
+      /*|..|../*|*/..|*/../*) echo "evidence path escapes repository: $p ($f)" >&2; exit 1 ;;
+    esac
+    [ -s "$p" ] || { echo "missing or empty declared evidence: $p ($f)" >&2; exit 1; }
+  done
   if [ "$(jq -r '.evidence_level' "$f")" = L3 ] || [ "$(jq -r '.evidence_level' "$f")" = L4 ]; then
-    p=$(jq -r '.files[] | select(test("\\.(pcap|pcapng)$"))' "$f" | head -1); [ -n "$p" ] && [ -s "$p" ]; [ -z "$p" ] || tshark -r "$p" -T fields -e frame.number >/dev/null
+    p=$(jq -r 'first(.files[] | select(test("\\.(pcap|pcapng)$"))) // empty' "$f")
+    [ -n "$p" ] || { echo "packet-level record declares no capture: $f" >&2; exit 1; }
+    tshark -r "$p" -T fields -e frame.number >/dev/null
   fi
-  count=$((count+1))
 done
 # Protocol-specific semantic gates for packet-level evidence.
 tshark -r captures/era3-dns/dns-hierarchy.pcapng -Y 'dns' -T fields -e frame.number | grep -q .
@@ -30,7 +50,7 @@ grep -q '198.18.240.6' captures/era3-traceroute/traceroute-icmp.txt
 for f in docs/era3/*.md; do [ -s "$f" ] || { echo "empty Era 3 doc: $f" >&2; exit 1; }; ! grep -Eq 'TODO|TBD|PLACEHOLDER' "$f" || { echo "placeholder in $f" >&2; exit 1; }; done
 [ -s docs/中文导览.md ] || { echo 'missing Chinese guide' >&2; exit 1; }
 ! grep -Eq 'TODO|TBD|PLACEHOLDER' docs/中文导览.md || { echo 'placeholder in Chinese guide' >&2; exit 1; }
-jq empty data/era3/*.json 2>/dev/null || true
+jq empty data/era3/*.json
 ! ip netns list | grep -q '^pz-era3-' || { echo 'Era 3 namespace residue' >&2; exit 1; }
 ! grep -RIlE 'BEGIN (OPENSSH |RSA |EC )?PRIVATE KEY' docs experiments captures data scripts >/dev/null || { echo 'private key leak' >&2; exit 1; }
 echo 'third-era validation: pass'
