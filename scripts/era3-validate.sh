@@ -17,7 +17,12 @@ for f in $EVIDENCE_FILES; do
   [ -s "$f" ] || { echo "missing Era 3 evidence descriptor: $f" >&2; exit 1; }
 done
 
-command -v jq >/dev/null; command -v jsonschema >/dev/null; command -v tshark >/dev/null
+for tool in jq jsonschema tshark ip; do
+  command -v "$tool" >/dev/null 2>&1 || {
+    echo "missing required command: $tool" >&2
+    exit 1
+  }
+done
 jq empty schemas/era3/evidence.schema.json
 for f in $EVIDENCE_FILES; do
   jsonschema -i "$f" schemas/era3/evidence.schema.json
@@ -51,6 +56,13 @@ for f in docs/era3/*.md; do [ -s "$f" ] || { echo "empty Era 3 doc: $f" >&2; exi
 [ -s docs/中文导览.md ] || { echo 'missing Chinese guide' >&2; exit 1; }
 ! grep -Eq 'TODO|TBD|PLACEHOLDER' docs/中文导览.md || { echo 'placeholder in Chinese guide' >&2; exit 1; }
 jq empty data/era3/*.json
-! ip netns list | grep -q '^pz-era3-' || { echo 'Era 3 namespace residue' >&2; exit 1; }
+namespaces=$(ip netns list) || {
+  echo 'unable to inspect Era 3 namespace cleanup' >&2
+  exit 1
+}
+if printf '%s\n' "$namespaces" | grep -q '^pz-era3-'; then
+  echo 'Era 3 namespace residue' >&2
+  exit 1
+fi
 ! grep -RIlE 'BEGIN (OPENSSH |RSA |EC )?PRIVATE KEY' docs experiments captures data scripts >/dev/null || { echo 'private key leak' >&2; exit 1; }
 echo 'third-era validation: pass'
