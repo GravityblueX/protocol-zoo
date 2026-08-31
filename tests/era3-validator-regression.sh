@@ -59,10 +59,52 @@ if output=$(PATH="$TMP/bin" "$SH" "$TMP/repo/scripts/era3-validate.sh" 2>&1); th
 fi
 printf '%s\n' "$output" | grep -Fq 'missing required command: ip'
 
+# `test -s` alone accepts a non-empty directory on Linux. A descriptor must
+# name an actual evidence file, not merely a path whose inode has a size.
+printf '#!/bin/sh\nexit 0\n' > "$TMP/bin/ip"
+printf '%s\n' \
+  '#!/bin/sh' \
+  'if [ "$1" = -r ] && [ "$2" = ".files[]" ] && [ "${3##*/}" = evidence.json ]; then' \
+  '  case "$3" in *era3-dns/*) printf "captures/era3-dns\n" ;; esac' \
+  'fi' \
+  'exit 0' \
+  > "$TMP/bin/jq"
+chmod +x "$TMP/bin/jq"
+
+if output=$(PATH="$TMP/bin:$PATH" "$SH" "$TMP/repo/scripts/era3-validate.sh" 2>&1); then
+  echo 'Era 3 validator accepted a directory as an evidence file' >&2
+  exit 1
+fi
+printf '%s\n' "$output" | grep -Fq \
+  'empty or non-regular declared evidence: captures/era3-dns'
+
+# Lexical `..`/absolute-path checks do not catch a repository path that is a
+# symlink to an external file. Resolve the path before checking containment.
+printf 'outside fixture\n' > "$TMP/outside-evidence"
+ln -s "$TMP/outside-evidence" \
+  "$TMP/repo/captures/era3-dns/external-evidence"
+printf '%s\n' \
+  '#!/bin/sh' \
+  'if [ "$1" = -r ] && [ "$2" = ".files[]" ] && [ "${3##*/}" = evidence.json ]; then' \
+  '  case "$3" in *era3-dns/*) printf "captures/era3-dns/external-evidence\n" ;; esac' \
+  'fi' \
+  'exit 0' \
+  > "$TMP/bin/jq"
+chmod +x "$TMP/bin/jq"
+
+if output=$(PATH="$TMP/bin:$PATH" "$SH" "$TMP/repo/scripts/era3-validate.sh" 2>&1); then
+  echo 'Era 3 validator accepted a symlink that escaped the repository' >&2
+  exit 1
+fi
+printf '%s\n' "$output" | grep -Fq \
+  'evidence path escapes repository: captures/era3-dns/external-evidence'
+
 # Finding an `ip` executable is not enough: a failed namespace query must not
 # be mistaken for an empty namespace list by a negated pipeline.
 printf '#!/bin/sh\nexit 42\n' > "$TMP/bin/ip"
 chmod +x "$TMP/bin/ip"
+printf '#!/bin/sh\nexit 0\n' > "$TMP/bin/jq"
+chmod +x "$TMP/bin/jq"
 printf 'backend-response\n' > "$TMP/repo/captures/era3-proxy/client.txt"
 printf '198.18.230.2\n' > "$TMP/repo/captures/era3-proxy/reverse-proxy.frames.tsv"
 printf '198.18.240.1\n' > "$TMP/repo/captures/era3-traceroute/traceroute-udp.txt"

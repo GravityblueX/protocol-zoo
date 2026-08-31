@@ -17,12 +17,16 @@ for f in $EVIDENCE_FILES; do
   [ -s "$f" ] || { echo "missing Era 3 evidence descriptor: $f" >&2; exit 1; }
 done
 
-for tool in jq jsonschema tshark ip; do
+for tool in jq jsonschema tshark ip realpath; do
   command -v "$tool" >/dev/null 2>&1 || {
     echo "missing required command: $tool" >&2
     exit 1
   }
 done
+ROOT_REAL=$(realpath -e -- "$ROOT") || {
+  echo "unable to resolve repository root: $ROOT" >&2
+  exit 1
+}
 jq empty schemas/era3/evidence.schema.json
 for f in $EVIDENCE_FILES; do
   jsonschema -i "$f" schemas/era3/evidence.schema.json
@@ -31,7 +35,18 @@ for f in $EVIDENCE_FILES; do
     case "$p" in
       /*|..|../*|*/..|*/../*) echo "evidence path escapes repository: $p ($f)" >&2; exit 1 ;;
     esac
-    [ -s "$p" ] || { echo "missing or empty declared evidence: $p ($f)" >&2; exit 1; }
+    resolved=$(realpath -e -- "$p") || {
+      echo "missing or unresolvable declared evidence: $p ($f)" >&2
+      exit 1
+    }
+    case "$resolved" in
+      "$ROOT_REAL"/*) ;;
+      *) echo "evidence path escapes repository: $p ($f)" >&2; exit 1 ;;
+    esac
+    [ -f "$resolved" ] && [ -s "$resolved" ] || {
+      echo "empty or non-regular declared evidence: $p ($f)" >&2
+      exit 1
+    }
   done
   if [ "$(jq -r '.evidence_level' "$f")" = L3 ] || [ "$(jq -r '.evidence_level' "$f")" = L4 ]; then
     p=$(jq -r 'first(.files[] | select(test("\\.(pcap|pcapng)$"))) // empty' "$f")
