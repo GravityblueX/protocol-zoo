@@ -1,0 +1,47 @@
+name: Era 2 evidence
+
+on:
+  pull_request:
+    paths:
+      - ".gitattributes"
+      - ".github/workflows/era2-evidence.yml"
+      - "captures/fixtures/era2/**"
+      - "captures/era2-ipv6/sit-ipv6-in-ipv4.json"
+      - "datasets/era2.csv"
+      - "scripts/era2-fixtures.sh"
+      - "scripts/era2-ipv6-capture.sh"
+      - "scripts/era2-validate.sh"
+      - "scripts/validate-era2-evidence.js"
+      - "tests/era2-evidence.test.js"
+  push:
+    paths:
+      - ".gitattributes"
+      - ".github/workflows/era2-evidence.yml"
+      - "captures/fixtures/era2/**"
+      - "captures/era2-ipv6/sit-ipv6-in-ipv4.json"
+      - "datasets/era2.csv"
+      - "scripts/era2-fixtures.sh"
+      - "scripts/era2-ipv6-capture.sh"
+      - "scripts/era2-validate.sh"
+      - "scripts/validate-era2-evidence.js"
+      - "tests/era2-evidence.test.js"
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [18, 22]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: node --test tests/era2-evidence.test.js
+      - run: sh scripts/era2-fixtures.sh
+      - run: git diff --exit-code -- captures/fixtures/era2
+      - run: node scripts/validate-era2-evidence.js

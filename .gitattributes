@@ -1,0 +1,2 @@
+*.sh text eol=lf
+captures/fixtures/era2/*.txt text eol=lf

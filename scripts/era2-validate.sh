@@ -9,14 +9,7 @@ grep -q 'M10' ROADMAP.md
 grep -q 'evidence_level' species/_template/README.md
 grep -q 'M19' IMPLEMENTATION_PLAN.md
 
-node - <<'NODE'
-const fs = require('fs');
-const rows = fs.readFileSync('datasets/era2.csv','utf8').trimEnd().split('\n').map(r => r.split(','));
-const width = rows[0].length;
-if (rows.some(r => r.length !== width)) throw new Error('era2.csv column mismatch');
-const allowed = new Set(['real-capture','fixture','static','document-reconstruction','not-run']);
-for (const [i,row] of rows.slice(1).entries()) if (!allowed.has(row[5])) throw new Error(`invalid evidence_level row ${i+2}: ${row[5]}`);
-NODE
+node scripts/validate-era2-evidence.js
 
 # M10 is declared real-capture: its evidence is mandatory, not optional.
 JSON=captures/era2-netns/boot-chain.json
