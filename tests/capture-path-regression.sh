@@ -362,5 +362,102 @@ run_exact_cleanup \
   rip-convergence.pcapng \
   rip-convergence.frames.tsv \
   rip-convergence.json
+run_exact_cleanup \
+  era2-static-results.sh \
+  cleanup-static \
+  status.json
+run_exact_cleanup \
+  real-app-capture.sh \
+  cleanup-real-app \
+  telnet.pcapng \
+  ftp-passive.log \
+  ftp-active.log \
+  ftp.pcapng \
+  telnet.frames.tsv \
+  ftp.frames.tsv
+
+run_exact_file_cleanup() {
+  script=$1
+  relative_file=$2
+
+  output_file=$FIXTURE/$relative_file
+  output_directory=${output_file%/*}
+  mkdir -p "$output_directory"
+  printf 'must survive cleanup\n' >"$output_directory/unknown.keep"
+
+  : >"$EFFECT_LOG"
+  : >"$COMMAND_OUTPUT"
+  if PZ_STUB_SUCCEED=mkdir PZ_EFFECT_LOG=$EFFECT_LOG \
+    PATH="$STUB_BIN:$ORIGINAL_PATH" \
+    "$SH_BIN" "$FIXTURE/scripts/$script" "$relative_file" \
+    >"$COMMAND_OUTPUT" 2>&1
+  then
+    fail "$script unexpectedly completed past the rm stopping stub"
+  fi
+
+  expected="rm|-f $output_file"
+  actual=$(grep '^rm|' "$EFFECT_LOG")
+  [ "$actual" = "$expected" ] || {
+    printf 'expected: %s\nactual:   %s\n' "$expected" "$actual" >&2
+    fail "$script cleanup did not unlink its exact output file"
+  }
+  [ -f "$output_directory/unknown.keep" ] || \
+    fail "$script removed an unknown output file"
+}
+
+run_exact_file_cleanup \
+  capability-report.sh \
+  captures/cleanup-capability/report.json
+
+# A regular file can be a hard link to an inode outside captures/. Unlinking
+# each validated output before writing prevents redirection from modifying the
+# external name while preserving unknown files in the selected directory.
+HARDLINK_BIN=$TMP/hardlink-bin
+mkdir -p "$HARDLINK_BIN"
+for tool in uname ip tshark jq jsonschema
+do
+  {
+    printf '%s\n' '#!/bin/sh'
+    printf '%s\n' 'printf "generated-output\\n"'
+  } >"$HARDLINK_BIN/$tool"
+  chmod +x "$HARDLINK_BIN/$tool" 2>/dev/null || true
+done
+
+run_hardlink_preservation() {
+  description=$1
+  script=$2
+  requested=$3
+  relative_file=$4
+  outside=$TMP/$description.outside
+  output=$FIXTURE/$relative_file
+
+  mkdir -p "${output%/*}"
+  printf 'outside-original\n' >"$outside"
+  ln "$outside" "$output" || \
+    fail "$description could not create its hard-link fixture"
+
+  PATH="$HARDLINK_BIN:$ORIGINAL_PATH" \
+    "$SH_BIN" "$FIXTURE/scripts/$script" "$requested" \
+    >"$COMMAND_OUTPUT" 2>&1 || {
+      cat "$COMMAND_OUTPUT" >&2
+      fail "$description did not complete with stubbed tools"
+    }
+
+  [ "$(cat "$outside")" = outside-original ] || \
+    fail "$description modified the external hard-link name"
+  [ "$(cat "$output")" != outside-original ] || \
+    fail "$description did not replace the validated capture output"
+}
+
+run_hardlink_preservation \
+  hardlink-capability \
+  capability-report.sh \
+  captures/hardlink-capability/report.json \
+  captures/hardlink-capability/report.json
+run_hardlink_preservation \
+  hardlink-static \
+  era2-static-results.sh \
+  captures/hardlink-static \
+  captures/hardlink-static/status.json
 
 printf 'capture path regressions: pass\n'

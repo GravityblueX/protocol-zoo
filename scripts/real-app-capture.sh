@@ -18,6 +18,13 @@ pz_require_capture_children "$ROOT" "$OUT" \
   telnet.frames.tsv \
   ftp.frames.tsv
 mkdir -p "$OUT_DIR"
+rm -f \
+  "$OUT_DIR/telnet.pcapng" \
+  "$OUT_DIR/ftp-passive.log" \
+  "$OUT_DIR/ftp-active.log" \
+  "$OUT_DIR/ftp.pcapng" \
+  "$OUT_DIR/telnet.frames.tsv" \
+  "$OUT_DIR/ftp.frames.tsv"
 PIDS=""; cleanup() { for p in $PIDS; do sudo kill "$p" 2>/dev/null || true; done; sudo "$ROOT/scripts/lab-netns.sh" teardown; }
 trap cleanup EXIT INT TERM
 sudo "$ROOT/scripts/lab-netns.sh" setup

@@ -9,6 +9,7 @@ pz_require_capture_path "$ROOT" "$OUT" file
 OUT_FILE=$PZ_CAPTURE_PATH
 OUT=$PZ_CAPTURE_RELATIVE
 mkdir -p "$(dirname "$OUT_FILE")"
+rm -f "$OUT_FILE"
 
 have() { command -v "$1" >/dev/null 2>&1 && printf true || printf false; }
 module_loaded() { grep -Eq "^$1( |$)" /proc/net/protocols 2>/dev/null && printf true || printf false; }

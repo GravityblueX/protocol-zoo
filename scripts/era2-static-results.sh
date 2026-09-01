@@ -10,6 +10,7 @@ OUT_DIR=$PZ_CAPTURE_PATH
 OUT=$PZ_CAPTURE_RELATIVE
 pz_require_capture_children "$ROOT" "$OUT" status.json
 mkdir -p "$OUT_DIR"
+rm -f "$OUT_DIR/status.json"
 cat >"$OUT_DIR/status.json" <<'EOF'
 {
   "protocol": "era2-static-suite",
