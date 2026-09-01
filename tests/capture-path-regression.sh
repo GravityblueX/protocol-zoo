@@ -333,6 +333,12 @@ run_exact_cleanup() {
 }
 
 run_exact_cleanup \
+  era2-capture.sh \
+  cleanup-era2-capture \
+  boot-chain.pcapng \
+  boot-chain.json \
+  boot-chain.frames.tsv
+run_exact_cleanup \
   era2-ipv6-capture.sh \
   cleanup-ipv6 \
   sit-ipv6-in-ipv4.pcapng \
@@ -408,6 +414,46 @@ run_exact_file_cleanup() {
 run_exact_file_cleanup \
   capability-report.sh \
   captures/cleanup-capability/report.json
+
+run_exact_dummy_cleanup() {
+  capture_relative=captures/cleanup-dummy/session.pcapng
+  result_relative=captures/cleanup-dummy/session.json
+  output_directory=$FIXTURE/captures/cleanup-dummy
+  capture_file=$FIXTURE/$capture_relative
+  result_file=$FIXTURE/$result_relative
+
+  mkdir -p "$output_directory"
+  printf 'old capture\n' >"$capture_file"
+  printf 'old result\n' >"$result_file"
+  printf 'must survive cleanup\n' >"$output_directory/unknown.keep"
+
+  : >"$EFFECT_LOG"
+  : >"$COMMAND_OUTPUT"
+  if CAPTURE=$capture_relative RESULT=$result_relative \
+    PZ_STUB_SUCCEED=mkdir PZ_EFFECT_LOG=$EFFECT_LOG \
+    PATH="$STUB_BIN:$ORIGINAL_PATH" \
+    "$SH_BIN" "$FIXTURE/scripts/dummy-capture.sh" \
+    >"$COMMAND_OUTPUT" 2>&1
+  then
+    fail 'dummy-capture.sh unexpectedly completed past the rm stopping stub'
+  fi
+
+  rm_count=$(grep -c '^rm|' "$EFFECT_LOG" || true)
+  [ "$rm_count" -eq 1 ] || {
+    cat "$EFFECT_LOG" >&2
+    fail 'dummy-capture.sh did not call rm exactly once'
+  }
+  expected="rm|-f $capture_file $result_file"
+  actual=$(grep '^rm|' "$EFFECT_LOG")
+  [ "$actual" = "$expected" ] || {
+    printf 'expected: %s\nactual:   %s\n' "$expected" "$actual" >&2
+    fail 'dummy-capture.sh cleanup did not unlink both exact outputs'
+  }
+  [ -f "$output_directory/unknown.keep" ] || \
+    fail 'dummy-capture.sh removed an unknown output file'
+}
+
+run_exact_dummy_cleanup
 
 # A regular file can be a hard link to an inode outside captures/. Unlinking
 # each validated output before writing prevents redirection from modifying the
