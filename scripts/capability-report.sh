@@ -1,9 +1,15 @@
 #!/bin/sh
 # Record local kernel/tool capability without creating interfaces or contacting a network.
 set -eu
-ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+ROOT=$(CDPATH='' cd -- "$(dirname -- "$0")/.." && pwd)
 OUT=${1:-captures/capabilities.json}
-mkdir -p "$ROOT/$(dirname "$OUT")"
+# shellcheck source=scripts/lib/capture-path.sh
+. "$ROOT/scripts/lib/capture-path.sh"
+pz_require_capture_path "$ROOT" "$OUT" file
+OUT_FILE=$PZ_CAPTURE_PATH
+OUT=$PZ_CAPTURE_RELATIVE
+mkdir -p "$(dirname "$OUT_FILE")"
+rm -f "$OUT_FILE"
 
 have() { command -v "$1" >/dev/null 2>&1 && printf true || printf false; }
 module_loaded() { grep -Eq "^$1( |$)" /proc/net/protocols 2>/dev/null && printf true || printf false; }
@@ -22,6 +28,6 @@ jq -n \
   --argjson sctp_proc "$(module_loaded sctp)" \
   --argjson dccp_proc "$(module_loaded dccp)" \
   --argjson udplite_proc "$(module_loaded udplite)" \
-  '{protocol:"capability-report", experiment:"phase-6-kernel-capability-observation", evidence_level:"not-run", environment:{os:"linux", kernel:$kernel, topology:"host-observation", tools:{ip:$ip,tshark:$tshark}}, result:{handshake:"not_run",capture:"none",frames:0,capabilities:{iproute2:$iproute2,tshark:$tshark_available,proc_net_protocols:{sctp:$sctp_proc,dccp:$dccp_proc,udplite:$udplite_proc}}}, sanitized:true, notes:["Observation only: no module loading, namespace creation, route changes, or network peers.","not_run is intentional; a real transport experiment requires explicit CAP_NET_ADMIN and an implementation/API test."]}' > "$ROOT/$OUT"
-jsonschema -i "$ROOT/$OUT" "$ROOT/schemas/experiment.schema.json"
+  '{protocol:"capability-report", experiment:"phase-6-kernel-capability-observation", evidence_level:"not-run", environment:{os:"linux", kernel:$kernel, topology:"host-observation", tools:{ip:$ip,tshark:$tshark}}, result:{handshake:"not_run",capture:"none",frames:0,capabilities:{iproute2:$iproute2,tshark:$tshark_available,proc_net_protocols:{sctp:$sctp_proc,dccp:$dccp_proc,udplite:$udplite_proc}}}, sanitized:true, notes:["Observation only: no module loading, namespace creation, route changes, or network peers.","not_run is intentional; a real transport experiment requires explicit CAP_NET_ADMIN and an implementation/API test."]}' > "$OUT_FILE"
+jsonschema -i "$OUT_FILE" "$ROOT/schemas/experiment.schema.json"
 printf 'pass: capability report -> %s\n' "$OUT"

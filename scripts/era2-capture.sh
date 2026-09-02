@@ -1,9 +1,20 @@
 #!/bin/sh
 # M10: DHCP address acquisition followed by TFTP boot-file retrieval.
 # Uses a dedicated /24 namespace link; never touches host routes or DHCP.
+# Redirects intentionally stay in caller-writable temporary/output directories.
+# shellcheck disable=SC2024
 set -eu
-ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+ROOT=$(CDPATH='' cd -- "$(dirname -- "$0")/.." && pwd)
 OUT=${1:-captures/era2-netns}
+# shellcheck source=scripts/lib/capture-path.sh
+. "$ROOT/scripts/lib/capture-path.sh"
+pz_require_capture_path "$ROOT" "$OUT" directory
+OUT_DIR=$PZ_CAPTURE_PATH
+OUT=$PZ_CAPTURE_RELATIVE
+pz_require_capture_children "$ROOT" "$OUT" \
+  boot-chain.pcapng \
+  boot-chain.frames.tsv \
+  boot-chain.json
 CLIENT_NS=pz-m10-client
 SERVER_NS=pz-m10-server
 VETH_C=pz-m10-c
@@ -11,19 +22,19 @@ VETH_S=pz-m10-s
 SERVER_IP=198.18.50.1
 LEASE_IP=198.18.50.10
 PIDS=""
-TMP=$(mktemp -d /tmp/pz-m10.XXXXXX)
+TMP=
 
 cleanup() {
   for p in $PIDS; do sudo kill "$p" 2>/dev/null || true; done
   sudo ip netns del "$CLIENT_NS" 2>/dev/null || true
   sudo ip netns del "$SERVER_NS" 2>/dev/null || true
   sudo ip link del "$VETH_C" 2>/dev/null || true
-  sudo rm -rf "$TMP"
+  [ -z "$TMP" ] || sudo rm -rf "$TMP"
 }
 trap cleanup EXIT INT TERM
 
-mkdir -p "$ROOT/$OUT"
-rm -f "$ROOT/$OUT/boot-chain.pcapng" "$ROOT/$OUT/boot-chain.json" "$ROOT/$OUT/boot-chain.frames.tsv"
+mkdir -p "$OUT_DIR"
+rm -f "$OUT_DIR/boot-chain.pcapng" "$OUT_DIR/boot-chain.json" "$OUT_DIR/boot-chain.frames.tsv"
 cleanup
 TMP=$(mktemp -d /tmp/pz-m10.XXXXXX)
 
@@ -70,21 +81,21 @@ sleep 1
 for p in $PIDS; do sudo kill -INT "$p" 2>/dev/null || true; done
 for p in $PIDS; do wait "$p" 2>/dev/null || true; done
 PIDS=""
-sudo editcap -F pcapng "$TMP/boot-chain.pcap" "$ROOT/$OUT/boot-chain.pcapng"
-sudo chown "$(id -u):$(id -g)" "$ROOT/$OUT/boot-chain.pcapng"
+sudo editcap -F pcapng "$TMP/boot-chain.pcap" "$OUT_DIR/boot-chain.pcapng"
+sudo chown "$(id -u):$(id -g)" "$OUT_DIR/boot-chain.pcapng"
 
-FRAMES=$(tshark -r "$ROOT/$OUT/boot-chain.pcapng" -T fields -e frame.number 2>/dev/null | wc -l)
+FRAMES=$(tshark -r "$OUT_DIR/boot-chain.pcapng" -T fields -e frame.number 2>/dev/null | wc -l)
 [ "$FRAMES" -gt 0 ]
-tshark -r "$ROOT/$OUT/boot-chain.pcapng" -Y 'dhcp || tftp' -T fields -E header=y \
+tshark -r "$OUT_DIR/boot-chain.pcapng" -Y 'dhcp || tftp' -T fields -E header=y \
   -e frame.number -e ip.src -e ip.dst -e udp.srcport -e udp.dstport \
   -e dhcp.option.dhcp -e tftp.opcode -e tftp.source_file -e tftp.block \
-  >"$ROOT/$OUT/boot-chain.frames.tsv"
-for msg in 1 2 3 5; do tshark -r "$ROOT/$OUT/boot-chain.pcapng" -Y "dhcp.option.dhcp == $msg" -T fields -e frame.number 2>/dev/null | grep -q .; done
-tshark -r "$ROOT/$OUT/boot-chain.pcapng" -Y 'tftp.opcode == 1' -T fields -e frame.number 2>/dev/null | grep -q .
-tshark -r "$ROOT/$OUT/boot-chain.pcapng" -Y 'tftp.opcode == 3' -T fields -e frame.number 2>/dev/null | grep -q .
-tshark -r "$ROOT/$OUT/boot-chain.pcapng" -Y 'tftp.opcode == 4' -T fields -e frame.number 2>/dev/null | grep -q .
+  >"$OUT_DIR/boot-chain.frames.tsv"
+for msg in 1 2 3 5; do tshark -r "$OUT_DIR/boot-chain.pcapng" -Y "dhcp.option.dhcp == $msg" -T fields -e frame.number 2>/dev/null | grep -q .; done
+tshark -r "$OUT_DIR/boot-chain.pcapng" -Y 'tftp.opcode == 1' -T fields -e frame.number 2>/dev/null | grep -q .
+tshark -r "$OUT_DIR/boot-chain.pcapng" -Y 'tftp.opcode == 3' -T fields -e frame.number 2>/dev/null | grep -q .
+tshark -r "$OUT_DIR/boot-chain.pcapng" -Y 'tftp.opcode == 4' -T fields -e frame.number 2>/dev/null | grep -q .
 
-cat >"$ROOT/$OUT/boot-chain.json" <<EOF
+cat >"$OUT_DIR/boot-chain.json" <<EOF
 {
   "protocol": "dhcp+tftp",
   "experiment": "m10-boot-chain-netns",
@@ -98,5 +109,5 @@ cat >"$ROOT/$OUT/boot-chain.json" <<EOF
   "notes": ["Client began without IPv4, completed DISCOVER/OFFER/REQUEST/ACK, then retrieved synthetic boot.img using TFTP RRQ/DATA/ACK.", "All traffic remained on 198.18.50.0/24 inside dedicated namespaces."]
 }
 EOF
-jsonschema -i "$ROOT/$OUT/boot-chain.json" "$ROOT/schemas/experiment.schema.json"
+jsonschema -i "$OUT_DIR/boot-chain.json" "$ROOT/schemas/experiment.schema.json"
 printf 'M10 boot chain: pass (%s frames, lease %s)\n' "$FRAMES" "$CLIENT_IP"

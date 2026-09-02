@@ -7,16 +7,16 @@ on:
       - "captures/era3-*/evidence.json"
       - "data/era3/**"
       - "schemas/era3/evidence.schema.json"
-      - "scripts/era3-validate.sh"
-      - "tests/era3-validator-regression.sh"
+      - "scripts/**"
+      - "tests/**"
   push:
     paths:
       - ".github/workflows/era3-validator.yml"
       - "captures/era3-*/evidence.json"
       - "data/era3/**"
       - "schemas/era3/evidence.schema.json"
-      - "scripts/era3-validate.sh"
-      - "tests/era3-validator-regression.sh"
+      - "scripts/**"
+      - "tests/**"
 
 permissions:
   contents: read

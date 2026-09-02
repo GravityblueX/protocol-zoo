@@ -1,10 +1,19 @@
 #!/bin/sh
 # Prove setup -> TCP exchange -> pcapng -> structured result -> cleanup.
 set -eu
-ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+ROOT=$(CDPATH='' cd -- "$(dirname -- "$0")/.." && pwd)
 CAPTURE=${CAPTURE:-captures/dummy-tcp-netns.pcapng}
 RESULT=${RESULT:-captures/dummy-tcp-netns.json}
 PORT=${PORT:-18080}
+# shellcheck source=scripts/lib/capture-path.sh
+. "$ROOT/scripts/lib/capture-path.sh"
+pz_require_capture_path "$ROOT" "$CAPTURE" file
+CAPTURE_FILE=$PZ_CAPTURE_PATH
+CAPTURE=$PZ_CAPTURE_RELATIVE
+pz_require_capture_path "$ROOT" "$RESULT" file
+RESULT_FILE=$PZ_CAPTURE_PATH
+RESULT=$PZ_CAPTURE_RELATIVE
+pz_require_disjoint_capture_files "$CAPTURE_FILE" "$RESULT_FILE"
 PCAP_TMP=
 HARNESS="$ROOT/scripts/lab-netns.sh"
 SERVER_PID=
@@ -16,8 +25,8 @@ cleanup() {
   "$HARNESS" teardown
 }
 trap cleanup EXIT INT TERM
-mkdir -p "$ROOT/$(dirname "$CAPTURE")" "$ROOT/$(dirname "$RESULT")"
-rm -f "$ROOT/$CAPTURE" "$ROOT/$RESULT"
+mkdir -p "$(dirname "$CAPTURE_FILE")" "$(dirname "$RESULT_FILE")"
+rm -f "$CAPTURE_FILE" "$RESULT_FILE"
 PCAP_TMP=$(mktemp --suffix=.pcap)
 "$HARNESS" setup
 ip netns exec pz-server sh -c "printf 'museum-ok\\n' | nc -l -s 198.18.0.2 -p $PORT -q 1" & SERVER_PID=$!
@@ -29,13 +38,13 @@ wait "$SERVER_PID"; SERVER_PID=
 sleep 1
 kill -INT "$CAPTURE_PID" 2>/dev/null || true
 wait "$CAPTURE_PID" || true; CAPTURE_PID=
-editcap -F pcapng "$PCAP_TMP" "$ROOT/$CAPTURE"
+editcap -F pcapng "$PCAP_TMP" "$CAPTURE_FILE"
 rm -f "$PCAP_TMP"; PCAP_TMP=
-FRAMES=$(tshark -r "$ROOT/$CAPTURE" -T fields -e frame.number 2>/dev/null | wc -l)
+FRAMES=$(tshark -r "$CAPTURE_FILE" -T fields -e frame.number 2>/dev/null | wc -l)
 KERNEL=$(uname -r)
 TCPDUMP=$(tcpdump --version 2>&1 | sed -n '1p')
 TSHARK=$(tshark --version 2>/dev/null | sed -n '1p')
-cat > "$ROOT/$RESULT" <<EOF
+cat > "$RESULT_FILE" <<EOF
 {
   "protocol": "dummy-tcp",
   "experiment": "phase-0-netns-harness",
@@ -49,5 +58,5 @@ cat > "$ROOT/$RESULT" <<EOF
   "notes": ["Fixed documentation-range addresses and synthetic payload only."]
 }
 EOF
-jsonschema -i "$ROOT/$RESULT" "$ROOT/schemas/experiment.schema.json"
+jsonschema -i "$RESULT_FILE" "$ROOT/schemas/experiment.schema.json"
 echo "pass: $FRAMES frames -> $CAPTURE"
