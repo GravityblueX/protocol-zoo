@@ -1,0 +1,24 @@
+name: Repository validator
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/repository-validator.yml"
+      - "scripts/validate-repo.sh"
+      - "tests/validate-repo-regression.sh"
+  push:
+    paths:
+      - ".github/workflows/repository-validator.yml"
+      - "scripts/validate-repo.sh"
+      - "tests/validate-repo-regression.sh"
+
+permissions:
+  contents: read
+
+jobs:
+  regressions:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - name: Exercise fail-closed regressions
+        run: sh tests/validate-repo-regression.sh

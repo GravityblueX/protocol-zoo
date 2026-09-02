@@ -4,6 +4,10 @@ ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
 cd "$ROOT"
 command -v jq >/dev/null
 command -v jsonschema >/dev/null
+command -v ip >/dev/null 2>&1 || {
+  echo 'missing required command: ip' >&2
+  exit 1
+}
 jq empty schemas/experiment.schema.json
 jsonschema -i captures/dummy-tcp-netns.json schemas/experiment.schema.json
 [ "$(jq -r '.result.handshake' captures/dummy-tcp-netns.json)" = pass ]
@@ -25,6 +29,19 @@ for capture in captures/*.pcap captures/*.pcapng captures/*/*.pcap captures/*/*.
   tshark -r "$capture" -T fields -e frame.number >/dev/null
   [ "$(stat -c '%s' "$capture")" -gt 0 ] || { echo "empty capture: $capture" >&2; exit 1; }
 done
-! ip netns list | grep -q '^pz-' || { echo 'namespace residue' >&2; exit 1; }
+namespaces=$(ip netns list) || {
+  echo 'unable to inspect namespace cleanup' >&2
+  exit 1
+}
+while IFS= read -r namespace; do
+  case "$namespace" in
+    pz-*)
+      echo 'namespace residue' >&2
+      exit 1
+      ;;
+  esac
+done <<EOF
+$namespaces
+EOF
 git diff --check
 echo 'protocol-zoo validation: pass'
