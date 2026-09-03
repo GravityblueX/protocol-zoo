@@ -10,7 +10,7 @@ printf 'PPP LCP Configure-Request MRU=1500 ACCM=0x000a\nPPP LCP Configure-Ack\nP
 printf 'RIP v2 RESPONSE command=2 metric=1 198.18.70.0/24\nRIP v2 RESPONSE command=2 metric=16 198.18.70.0/24\n' > "$ROOT/captures/fixtures/era2/rip-count-to-infinity.txt"
 printf 'ICMP type=4 code=0 Source Quench (historic/deprecated)\nICMP type=3 code=3 Port Unreachable\nICMP type=11 code=0 Time Exceeded\n' > "$ROOT/captures/fixtures/era2/icmp-lifecycle.txt"
 printf 'NBNS query NAME=OFFICE<00> broadcast\nNBNS positive response address=198.18.80.2\nNBSS SESSION REQUEST\nSMB NEGOTIATE\n' > "$ROOT/captures/fixtures/era2/netbios.txt"
-printf '6to4 outer=2002:c612:0101::/48 inner=IPv4 198.18.90.1\nTeredo UDP/IPv4 mapped-client\nISATAP proto-41 host-router\nNAT64 IPv6 client -> IPv4 server\n' > "$ROOT/captures/fixtures/era2/ipv6-transition.txt"
+printf '6to4 prefix=2002:c612:5a01::/48 embedded_ipv4=198.18.90.1\nTeredo UDP/IPv4 mapped-client\nISATAP proto-41 host-router\nNAT64 IPv6 client -> IPv4 server\n' > "$ROOT/captures/fixtures/era2/ipv6-transition.txt"
 printf 'NCP OPEN connection-control\nNCP CLOSE connection-control\nNCP FLOW-CONTROL\nTCP/IP split: NCP host-host semantics become TCP + IP layers\n' > "$ROOT/captures/fixtures/era2/pre-ip-ncp.txt"
 printf 'rlogin trusted-host .rhosts assumption\nrsh remote command with stderr channel\nrexec username/password over TCP\nSSH host-key + public-key identity\n' > "$ROOT/captures/fixtures/era2/trust-lineage.txt"
 printf 'IGMPv2 Membership Report group=239.1.1.1\nIGMPv2 Leave Group group=239.1.1.1\nPIM Join/Prune upstream=198.18.100.1\nDVMRP route report\n' > "$ROOT/captures/fixtures/era2/multicast.txt"

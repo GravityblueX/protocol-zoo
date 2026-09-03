@@ -34,10 +34,10 @@ sleep 1; for p in $PIDS; do sudo kill -INT "$p" 2>/dev/null || true; done; for p
 sudo editcap -F pcapng "$TMP/sit.pcap" "$OUT_DIR/sit-ipv6-in-ipv4.pcapng"; sudo chown "$(id -u):$(id -g)" "$OUT_DIR/sit-ipv6-in-ipv4.pcapng"
 tshark -r "$OUT_DIR/sit-ipv6-in-ipv4.pcapng" -T fields -E header=y -e frame.number -e ip.src -e ip.dst -e ip.proto -e ipv6.src -e ipv6.dst -e icmpv6.type >"$OUT_DIR/sit-ipv6-in-ipv4.frames.tsv"
 frames=$(tshark -r "$OUT_DIR/sit-ipv6-in-ipv4.pcapng" -T fields -e frame.number | wc -l); [ "$frames" -gt 0 ]
+cleanup
 cat >"$OUT_DIR/sit-ipv6-in-ipv4.json" <<EOF
-{"protocol":"6to4-private-sit","experiment":"m15-private-ipv6-in-ipv4-netns","evidence_level":"real-capture","environment":{"os":"linux","kernel":"$(uname -r)","topology":"private netns-veth plus SIT tunnel","tools":{"ip":"$(ip -V 2>&1 | sed -n 1p)","tcpdump":"$(tcpdump --version 2>&1 | sed -n 1p)","tshark":"$(tshark --version 2>/dev/null | sed -n 1p)"}},"capture_point":"$B:$VB","command":"scripts/era2-ipv6-capture.sh","capture_filter":"ip proto 41 or icmp6","result":{"handshake":"pass","capture":"$OUT/sit-ipv6-in-ipv4.pcapng","frames":$frames,"outer_protocol":41,"inner_protocol":"IPv6/ICMPv6"},"sanitized":true,"notes":["Private SIT-style IPv6-in-IPv4 only; no public 6to4 anycast, Teredo relay, ISATAP broker, or NAT64 service was contacted."]}
+{"protocol":"sit-ipv6-in-ipv4","experiment":"m15-private-ipv6-in-ipv4-netns","evidence_level":"real-capture","environment":{"os":"linux","kernel":"$(uname -r)","topology":"private netns-veth plus SIT tunnel","tools":{"ip":"$(ip -V 2>&1 | sed -n 1p)","tcpdump":"$(tcpdump --version 2>&1 | sed -n 1p)","tshark":"$(tshark --version 2>/dev/null | sed -n 1p)"}},"capture_point":"$B:$VB","command":"scripts/era2-ipv6-capture.sh","capture_filter":"ip proto 41 or icmp6","result":{"handshake":"pass","capture":"$OUT/sit-ipv6-in-ipv4.pcapng","frames":$frames,"outer_protocol":41,"inner_protocol":"IPv6/ICMPv6"},"sanitized":true,"notes":["Private SIT-style IPv6-in-IPv4 only; no public 6to4 anycast, Teredo relay, ISATAP broker, or NAT64 service was contacted."]}
 EOF
 jsonschema -i "$OUT_DIR/sit-ipv6-in-ipv4.json" "$ROOT/schemas/experiment.schema.json"
-cleanup
 trap - EXIT INT TERM
 printf 'M15 private IPv6 transition: pass (%s frames)\n' "$frames"
