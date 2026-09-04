@@ -1,7 +1,7 @@
 #!/bin/sh
 # Single entry point for safe, reproducible Protocol Zoo experiments.
 set -eu
-ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+ROOT=$(CDPATH='' cd -- "$(dirname -- "$0")/.." && pwd)
 usage() {
   cat >&2 <<'EOF'
 usage: scripts/experiment.sh {fixtures|validate|capture|real-app|sctp|remaining|era2-fixtures|era2-capture|era2-network|era2-ipv6|era2-rip|era2-ppp|era2-validate|era3-validate|era3-dns|era3-http-tls|era3-gre|era3-path|era2-static|capabilities|clean}
@@ -29,14 +29,20 @@ usage: scripts/experiment.sh {fixtures|validate|capture|real-app|sctp|remaining|
 EOF
   exit 2
 }
-[ "$#" -ge 1 ] && [ "$#" -le 2 ] || usage
+if [ "$#" -lt 1 ] || [ "$#" -gt 2 ]; then usage; fi
 case "$1" in
   fixtures) exec "$ROOT/scripts/make-fixtures.sh" ;;
   validate) exec "$ROOT/scripts/validate-repo.sh" ;;
   capture) exec sudo "$ROOT/scripts/dummy-capture.sh" ;;
   real-app) exec sudo "$ROOT/scripts/real-app-capture.sh" "${2:-captures/real-app-netns}" ;;
-  sctp) exec "$ROOT/scripts/kali-sctp-capture.sh" ;;
-  remaining) exec "$ROOT/scripts/kali-remaining-capture.sh" ;;
+  sctp)
+    shift
+    exec "$ROOT/scripts/kali-sctp-capture.sh" "$@"
+    ;;
+  remaining)
+    shift
+    exec "$ROOT/scripts/kali-remaining-capture.sh" "$@"
+    ;;
   era2-fixtures) exec "$ROOT/scripts/era2-fixtures.sh" ;;
   era2-capture) exec "$ROOT/scripts/era2-capture.sh" "${2:-captures/era2-netns}" ;;
   era2-network) exec "$ROOT/scripts/era2-network-capture.sh" "${2:-captures/era2-network}" ;;
