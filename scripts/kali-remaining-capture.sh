@@ -31,34 +31,68 @@ done
   echo "missing Kali key: $KEYDIR/id_ed25519" >&2
   exit 1
 }
-mkdir -p "$OUT_DIR"
-STAGE=$(mktemp -d "$OUT_DIR/.kali-remaining.XXXXXX")
+STAGE=
 COMMITTED=false
 PUBLISHED=
+CLEANING=false
+PENDING_SIGNAL_STATUS=
 cleanup() {
-  [ -n "$STAGE" ] || return 0
-  rollback_ok=true
-  if [ "$COMMITTED" != true ]; then
-    for name in udplite.pcapng gre.pcapng ipip.pcapng; do
-      backup=$STAGE/.previous.$name
-      case " $PUBLISHED " in
-        *" $name "*)
-          rm -f "$OUT_DIR/$name" || rollback_ok=false
-          ;;
-      esac
-      if [ -e "$backup" ]; then
-        if ! mv "$backup" "$OUT_DIR/$name"; then
-          echo "unable to restore previous Kali remaining artifact: $name" >&2
-          rollback_ok=false
+  [ "$CLEANING" != true ] || return 0
+  CLEANING=true
+  cleanup_status=0
+  if [ -n "$STAGE" ]; then
+    rollback_ok=true
+    if [ "$COMMITTED" != true ]; then
+      for name in udplite.pcapng gre.pcapng ipip.pcapng; do
+        backup=$STAGE/.previous.$name
+        case " $PUBLISHED " in
+          *" $name "*)
+            rm -f "$OUT_DIR/$name" || rollback_ok=false
+            ;;
+        esac
+        if [ -e "$backup" ]; then
+          if ! mv "$backup" "$OUT_DIR/$name" && \
+            { [ -e "$backup" ] || [ ! -f "$OUT_DIR/$name" ]; }; then
+            echo "unable to restore previous Kali remaining artifact: $name" >&2
+            rollback_ok=false
+          fi
         fi
+      done
+    fi
+    if [ "$rollback_ok" = true ]; then
+      if rm -rf "$STAGE"; then
+        STAGE=
+        PUBLISHED=
+      else
+        echo "unable to remove failed Kali remaining staging directory: $STAGE" >&2
+        rollback_ok=false
       fi
-    done
+    fi
+    if [ "$rollback_ok" != true ]; then
+      echo "retained failed Kali remaining staging directory: $STAGE" >&2
+      cleanup_status=1
+    fi
   fi
-  if [ "$rollback_ok" = true ]; then
-    rm -rf "$STAGE"
-  else
-    echo "retained failed Kali remaining staging directory: $STAGE" >&2
+  if [ -z "$STAGE" ]; then
+    CLEANING=false
   fi
+  if [ -n "$PENDING_SIGNAL_STATUS" ]; then
+    signal_status=$PENDING_SIGNAL_STATUS
+    PENDING_SIGNAL_STATUS=
+    CLEANING=false
+    exit "$signal_status"
+  fi
+  return "$cleanup_status"
+}
+handle_signal() {
+  PENDING_SIGNAL_STATUS=$1
+  trap - EXIT
+  trap '' HUP INT TERM
+  if [ "$CLEANING" = true ]; then
+    return 0
+  fi
+  cleanup
+  exit "$1"
 }
 publish() {
   source=$1
@@ -66,10 +100,16 @@ publish() {
   if [ -e "$OUT_DIR/$name" ]; then
     mv "$OUT_DIR/$name" "$STAGE/.previous.$name"
   fi
-  mv "$source" "$OUT_DIR/$name"
   PUBLISHED="$PUBLISHED $name"
+  mv "$source" "$OUT_DIR/$name"
 }
-trap cleanup EXIT HUP INT TERM
+trap cleanup EXIT
+trap 'handle_signal 129' HUP
+trap 'handle_signal 130' INT
+trap 'handle_signal 143' TERM
+
+mkdir -p "$OUT_DIR"
+STAGE=$(mktemp -d "$OUT_DIR/.kali-remaining.XXXXXX")
 
 scp -q -o StrictHostKeyChecking=no -o UserKnownHostsFile=/tmp/pz-known-hosts \
   -o ConnectTimeout=8 -i "$KEYDIR/id_ed25519" \
@@ -97,5 +137,4 @@ for f in udplite gre ipip; do
 done
 COMMITTED=true
 cleanup
-STAGE=
 trap - EXIT HUP INT TERM

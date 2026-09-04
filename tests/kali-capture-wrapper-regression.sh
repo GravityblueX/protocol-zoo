@@ -23,6 +23,7 @@ FIXTURE=$(CDPATH='' cd -- "$FIXTURE" && pwd -P)
 SH_BIN=${PZ_TEST_SHELL:-$(command -v sh)}
 PYTHON_BIN=${PZ_TEST_PYTHON:-$(command -v python || command -v python3)}
 REAL_MV=$(command -v mv)
+REAL_MKTEMP=$(command -v mktemp)
 
 fail() {
   printf 'FAIL: %s\n' "$*" >&2
@@ -49,7 +50,21 @@ count=0
 count=$((count + 1))
 printf '%s\n' "$count" >"$count_file"
 [ "${PZ_FAIL_MV_CALL-}" != "$count" ] || exit 75
+if [ "${PZ_SIGNAL_MV_CALL-}" = "$count" ]; then
+  "${PZ_REAL_MV:?}" "$@"
+  kill -TERM "$PPID"
+  exit 0
+fi
 exec "${PZ_REAL_MV:?}" "$@"
+EOF
+
+cat >"$BIN/mktemp" <<'EOF'
+#!/bin/sh
+stage=$("${PZ_REAL_MKTEMP:?}" "$@") || exit
+printf '%s\n' "$stage"
+if [ "${PZ_SIGNAL_MKTEMP-}" = 1 ]; then
+  kill -TERM "$PPID"
+fi
 EOF
 
 cat >"$BIN/scp" <<'EOF'
@@ -130,14 +145,22 @@ esac
 EOF
 
 if [ -n "${PZ_REAL_JQ-}" ]; then
-  cp "$PZ_REAL_JQ" "$BIN/jq"
+  case "$PZ_REAL_JQ" in
+    *.exe)
+      cp "$PZ_REAL_JQ" "$BIN/jq-real.exe"
+      cat >"$BIN/jq" <<'EOF'
+#!/bin/sh
+BIN_DIR=$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd)
+exec "$BIN_DIR/jq-real.exe" "$@"
+EOF
+      ;;
+    *) cp "$PZ_REAL_JQ" "$BIN/jq" ;;
+  esac
 else
 cat >"$BIN/jq" <<'PY'
 #!/usr/bin/env python3
 import json
-import os
 import shlex
-import subprocess
 import sys
 
 args = sys.argv[1:]
@@ -155,12 +178,7 @@ try:
 
     capture = option("capture")
     command = option("command")
-    source = args[-1]
-    if os.name == "nt" and source.startswith("/"):
-        source = subprocess.check_output(
-            ["cygpath", "-w", source]
-        ).decode("utf-8").strip()
-    text = open(source, encoding="utf-8").read()
+    text = sys.stdin.read()
     decoder = json.JSONDecoder()
     values = []
     offset = 0
@@ -207,7 +225,7 @@ schema = json.load(open(native(args[2]), encoding="utf-8"))
 Draft202012Validator.check_schema(schema)
 Draft202012Validator(schema).validate(instance)
 PY
-chmod +x "$BIN/python3" "$BIN/ssh" "$BIN/scp" "$BIN/mv" "$BIN/jq" \
+chmod +x "$BIN/python3" "$BIN/ssh" "$BIN/scp" "$BIN/mv" "$BIN/mktemp" "$BIN/jq" \
   "$BIN/jsonschema" \
   2>/dev/null || true
 
@@ -220,11 +238,14 @@ run_wrapper() {
   PZ_OUTSIDE_FILE=$TMP/outside-file \
   PZ_TEST_PYTHON=$PYTHON_BIN \
   PZ_REAL_MV=$REAL_MV \
+  PZ_REAL_MKTEMP=$REAL_MKTEMP \
   PZ_KALI_KEYDIR=$KEYDIR \
   PZ_KALI_HOST=203.0.113.77 \
   PZ_FAIL_SSH=${PZ_FAIL_SSH-} \
   PZ_FAIL_SCP_CALL=${PZ_FAIL_SCP_CALL-} \
   PZ_FAIL_MV_CALL=${PZ_FAIL_MV_CALL-} \
+  PZ_SIGNAL_MV_CALL=${PZ_SIGNAL_MV_CALL-} \
+  PZ_SIGNAL_MKTEMP=${PZ_SIGNAL_MKTEMP-} \
   PZ_SCTP_PCAP_SHAPE=${PZ_SCTP_PCAP_SHAPE-} \
   PZ_SCTP_JSON_SHAPE=${PZ_SCTP_JSON_SHAPE-} \
   PZ_UDPLITE_SHAPE=${PZ_UDPLITE_SHAPE-} \
@@ -316,6 +337,107 @@ for call in 1 2 3; do
     "$FIXTURE/scripts/kali-remaining-capture.sh"
 done
 
+# Signals are transactional too. A signal after any successful rename must
+# exit nonzero, restore an older complete set byte-for-byte, or remove every
+# newly published final when there was no older set. No staging directory may
+# survive. These call ranges cover both old-to-backup and stage-to-final moves.
+assert_signal_empty_target() {
+  target=$1
+  call=$2
+  script=$3
+  rm -rf "$FIXTURE/${target:?}"
+  rm -f "$TMP/scp-count" "$TMP/mv-count"
+  if PZ_SIGNAL_MV_CALL=$call run_wrapper \
+    "$FIXTURE/scripts/$script" "$target" >"$TMP/output" 2>&1; then
+    fail "$script swallowed TERM after publication move $call"
+  fi
+  [ -d "$FIXTURE/$target" ] || fail "$script removed its output directory"
+  [ "$(find "$FIXTURE/$target" -mindepth 1 -maxdepth 1 | wc -l)" -eq 0 ] || {
+    find "$FIXTURE/$target" -mindepth 1 -maxdepth 1 >&2
+    fail "$script left a partial new set after TERM on move $call"
+  }
+}
+
+assert_sctp_signal_rollback() {
+  call=$1
+  target=captures/sctp-signal-old-$call
+  rm -rf "$FIXTURE/${target:?}"
+  mkdir -p "$FIXTURE/$target"
+  printf 'old pcap %s\n' "$call" >"$FIXTURE/$target/sctp.pcap"
+  printf 'old json %s\n' "$call" >"$FIXTURE/$target/sctp.json"
+  printf 'unrelated\n' >"$FIXTURE/$target/unknown.keep"
+  rm -f "$TMP/scp-count" "$TMP/mv-count"
+  if PZ_SIGNAL_MV_CALL=$call run_wrapper \
+    "$FIXTURE/scripts/kali-sctp-capture.sh" "$target" \
+    >"$TMP/output" 2>&1; then
+    fail "SCTP swallowed TERM after old-set move $call"
+  fi
+  [ "$(cat "$FIXTURE/$target/sctp.pcap")" = "old pcap $call" ] && \
+    [ "$(cat "$FIXTURE/$target/sctp.json")" = "old json $call" ] && \
+    [ "$(cat "$FIXTURE/$target/unknown.keep")" = unrelated ] || \
+    fail "SCTP did not restore the complete old set after move $call"
+  [ "$(find "$FIXTURE/$target" -mindepth 1 -maxdepth 1 | wc -l)" -eq 3 ] || \
+    fail "SCTP left staging or partial files after old-set move $call"
+}
+
+assert_remaining_signal_rollback() {
+  call=$1
+  target=captures/remaining-signal-old-$call
+  rm -rf "$FIXTURE/${target:?}"
+  mkdir -p "$FIXTURE/$target"
+  for protocol in udplite gre ipip; do
+    printf 'old %s %s\n' "$protocol" "$call" \
+      >"$FIXTURE/$target/$protocol.pcapng"
+  done
+  printf 'unrelated\n' >"$FIXTURE/$target/unknown.keep"
+  rm -f "$TMP/scp-count" "$TMP/mv-count"
+  if PZ_SIGNAL_MV_CALL=$call run_wrapper \
+    "$FIXTURE/scripts/kali-remaining-capture.sh" "$target" \
+    >"$TMP/output" 2>&1; then
+    fail "remaining swallowed TERM after old-set move $call"
+  fi
+  for protocol in udplite gre ipip; do
+    [ "$(cat "$FIXTURE/$target/$protocol.pcapng")" = \
+      "old $protocol $call" ] || \
+      fail "remaining did not restore $protocol after move $call"
+  done
+  [ "$(cat "$FIXTURE/$target/unknown.keep")" = unrelated ] || \
+    fail "remaining damaged an unrelated output after move $call"
+  [ "$(find "$FIXTURE/$target" -mindepth 1 -maxdepth 1 | wc -l)" -eq 4 ] || \
+    fail "remaining left staging or partial files after old-set move $call"
+}
+
+for call in 1 2; do
+  assert_signal_empty_target "captures/sctp-signal-new-$call" "$call" \
+    kali-sctp-capture.sh
+done
+for call in 1 2 3; do
+  assert_signal_empty_target "captures/remaining-signal-new-$call" "$call" \
+    kali-remaining-capture.sh
+done
+for call in 1 2 3 4; do
+  assert_sctp_signal_rollback "$call"
+done
+for call in 1 2 3 4 5 6; do
+  assert_remaining_signal_rollback "$call"
+done
+
+# The trap is live before mktemp creates a staging directory.
+for script in kali-sctp-capture.sh kali-remaining-capture.sh; do
+  target=captures/${script%.sh}-signal-mktemp
+  rm -rf "$FIXTURE/${target:?}"
+  rm -f "$TMP/scp-count" "$TMP/mv-count"
+  if PZ_SIGNAL_MKTEMP=1 run_wrapper "$FIXTURE/scripts/$script" "$target" \
+    >"$TMP/output" 2>&1; then
+    fail "$script swallowed TERM after creating staging"
+  fi
+  [ -d "$FIXTURE/$target" ] || fail "$script removed its output directory"
+  [ "$(find "$FIXTURE/$target" -mindepth 1 -maxdepth 1 | wc -l)" -eq 0 ] || {
+    find "$FIXTURE/$target" -mindepth 1 -maxdepth 1 >&2
+    fail "$script leaked staging after TERM from mktemp"
+  }
+done
+
 # A mid-publication failure restores an older complete set, not a mixture.
 target=captures/sctp-rollback
 mkdir -p "$FIXTURE/$target"
@@ -332,6 +454,53 @@ if [ "$(cat "$FIXTURE/$target/sctp.pcap")" != 'old pcap' ] || \
 fi
 [ "$(find "$FIXTURE/$target" -mindepth 1 -maxdepth 1 | wc -l)" -eq 2 ] || \
   fail 'SCTP rollback left staging artifacts'
+
+# A second signal delivered while EXIT cleanup is restoring backups is
+# deferred until that one cleanup pass completes. It must not recursively
+# remove a file that the outer cleanup has just restored.
+for signal_call in 5 6; do
+  target=captures/sctp-failure-signal-restore-$signal_call
+  rm -rf "$FIXTURE/${target:?}"
+  mkdir -p "$FIXTURE/$target"
+  printf 'old pcap restore %s\n' "$signal_call" >"$FIXTURE/$target/sctp.pcap"
+  printf 'old json restore %s\n' "$signal_call" >"$FIXTURE/$target/sctp.json"
+  rm -f "$TMP/scp-count" "$TMP/mv-count"
+  if PZ_FAIL_MV_CALL=4 PZ_SIGNAL_MV_CALL=$signal_call run_wrapper \
+    "$FIXTURE/scripts/kali-sctp-capture.sh" "$target" \
+    >"$TMP/output" 2>&1; then
+    fail "SCTP swallowed TERM during restore move $signal_call"
+  fi
+  [ "$(cat "$FIXTURE/$target/sctp.pcap")" = \
+    "old pcap restore $signal_call" ] && \
+    [ "$(cat "$FIXTURE/$target/sctp.json")" = \
+    "old json restore $signal_call" ] || \
+    fail "SCTP recursive cleanup damaged restore move $signal_call"
+  [ "$(find "$FIXTURE/$target" -mindepth 1 -maxdepth 1 | wc -l)" -eq 2 ] || \
+    fail "SCTP restore signal left staging or partial files at $signal_call"
+done
+
+for signal_call in 7 8 9; do
+  target=captures/remaining-failure-signal-restore-$signal_call
+  rm -rf "$FIXTURE/${target:?}"
+  mkdir -p "$FIXTURE/$target"
+  for protocol in udplite gre ipip; do
+    printf 'old %s restore %s\n' "$protocol" "$signal_call" \
+      >"$FIXTURE/$target/$protocol.pcapng"
+  done
+  rm -f "$TMP/scp-count" "$TMP/mv-count"
+  if PZ_FAIL_MV_CALL=6 PZ_SIGNAL_MV_CALL=$signal_call run_wrapper \
+    "$FIXTURE/scripts/kali-remaining-capture.sh" "$target" \
+    >"$TMP/output" 2>&1; then
+    fail "remaining swallowed TERM during restore move $signal_call"
+  fi
+  for protocol in udplite gre ipip; do
+    [ "$(cat "$FIXTURE/$target/$protocol.pcapng")" = \
+      "old $protocol restore $signal_call" ] || \
+      fail "remaining recursive cleanup damaged $protocol at $signal_call"
+  done
+  [ "$(find "$FIXTURE/$target" -mindepth 1 -maxdepth 1 | wc -l)" -eq 3 ] || \
+    fail "remaining restore signal left partial files at $signal_call"
+done
 
 # Successful transfers that produce anything other than a nonempty regular
 # file fail closed. Symlinks run where the platform supports them.
@@ -476,5 +645,55 @@ for file in udplite gre ipip; do
   [ -s "$FIXTURE/captures/kali-remaining/$file.pcapng" ] || \
     fail "experiment.sh remaining did not publish $file"
 done
+
+# A signal delivered while cleanup performs its final pending-signal test must
+# not fall between the last test and resetting CLEANING. Bash can override the
+# `[` builtin deterministically at that exact point; other shells still cover
+# the portable signal matrix above.
+if command -v bash >/dev/null 2>&1; then
+  cat >"$TMP/tail-signal.bash" <<'BASH'
+function [ {
+  if builtin [ -n "${CLEANING+x}" ] && \
+    builtin [ -z "${STAGE-}" ] && \
+    builtin [ -z "${PENDING_SIGNAL_STATUS-}" ] && \
+    builtin [ "${1-}" = -n ]; then
+    printf 'TAIL_SIGNAL_SENT pid=%s cleaning=%s\n' "$$" "$CLEANING" >&2
+    kill -TERM "$$"
+  fi
+  builtin [ "$@"
+}
+export -f \[
+exec bash "$@"
+BASH
+  target=captures/sctp-tail-signal
+  rm -rf "$FIXTURE/${target:?}"
+  rm -f "$TMP/scp-count" "$TMP/mv-count"
+  if (
+    cd "$TMP/caller"
+    PZ_EFFECT_LOG=$EFFECT_LOG \
+    PZ_SCP_COUNT_FILE=$TMP/scp-count \
+    PZ_MV_COUNT_FILE=$TMP/mv-count \
+    PZ_OUTSIDE_FILE=$TMP/outside-file \
+    PZ_TEST_PYTHON=$PYTHON_BIN \
+    PZ_REAL_MV=$REAL_MV \
+    PZ_REAL_MKTEMP=$REAL_MKTEMP \
+    PZ_KALI_KEYDIR=$KEYDIR \
+    PZ_KALI_HOST=203.0.113.77 \
+    PATH="$BIN:$PATH" \
+    bash "$TMP/tail-signal.bash" \
+      "$FIXTURE/scripts/kali-sctp-capture.sh" "$target"
+  ) >"$TMP/tail-output" 2>&1; then
+    fail 'SCTP swallowed TERM during the final pending-signal check'
+  fi
+  grep -Fq 'TAIL_SIGNAL_SENT' "$TMP/tail-output" || \
+    fail 'tail-signal probe did not reach the final pending-signal check'
+  [ -s "$FIXTURE/$target/sctp.pcap" ] && \
+    [ -s "$FIXTURE/$target/sctp.json" ] || \
+    fail 'late post-commit TERM left an incomplete SCTP set'
+  [ "$(find "$FIXTURE/$target" -mindepth 1 -maxdepth 1 | wc -l)" -eq 2 ] || \
+    fail 'late post-commit TERM left staging or unrelated output'
+else
+  printf 'SKIP: cleanup-tail signal regression (Bash unavailable)\n'
+fi
 
 printf 'Kali capture wrapper regressions: pass (%s)\n' "$SH_BIN"
