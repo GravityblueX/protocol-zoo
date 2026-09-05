@@ -161,4 +161,5 @@ if output=$(PATH="$TMP/bin:$PATH" "$SH" "$TMP/repo/scripts/era3-validate.sh" 2>&
 fi
 printf '%s\n' "$output" | grep -Fq 'unable to inspect Era 3 namespace cleanup'
 "$SH" "$ROOT/tests/capture-path-regression.sh"
+"$SH" "$ROOT/tests/kali-capture-wrapper-regression.sh"
 printf 'Era 3 validator regressions: pass\n'

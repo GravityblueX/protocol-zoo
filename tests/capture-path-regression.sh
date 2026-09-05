@@ -15,6 +15,10 @@ SH_BIN=$(command -v sh)
 mkdir -p "$FIXTURE/scripts/lib" "$FIXTURE/captures" "$STUB_BIN" \
   "$TMP/outside-directory"
 FIXTURE=$(CDPATH='' cd -- "$FIXTURE" && pwd -P)
+KALI_KEYDIR=$TMP/kali-key
+mkdir -p "$KALI_KEYDIR"
+printf 'test key\n' >"$KALI_KEYDIR/id_ed25519"
+export PZ_KALI_KEYDIR="$KALI_KEYDIR"
 for script in \
   capability-report.sh \
   dummy-capture.sh \
@@ -24,6 +28,8 @@ for script in \
   era2-ppp-capture.sh \
   era2-rip-capture.sh \
   era2-static-results.sh \
+  kali-remaining-capture.sh \
+  kali-sctp-capture.sh \
   real-app-capture.sh \
   lab-netns.sh
 do
@@ -33,7 +39,8 @@ cp "$ROOT/scripts/lib/capture-path.sh" "$FIXTURE/scripts/lib/capture-path.sh"
 
 for tool in \
   mkdir rm sudo ip mktemp jq jsonschema uname tshark tcpdump editcap nc \
-  sleep socat chmod chown cmp grep awk cut wc tee cat python3 timeout
+  sleep socat chmod chown cmp grep awk cut wc tee cat python3 timeout \
+  scp ssh sed mv
 do
   {
     printf '%s\n' '#!/bin/sh'
@@ -43,7 +50,15 @@ do
       'printf "%s|%s\n" "${0##*/}" "$*" >> "${PZ_EFFECT_LOG:?}"'
     # shellcheck disable=SC2016
     printf '%s\n' \
-      'case " ${PZ_STUB_SUCCEED-} " in *" ${0##*/} "*) exit 0 ;; esac'
+      'case " ${PZ_STUB_SUCCEED-} " in' \
+      '  *" ${0##*/} "*)' \
+      '    case "${0##*/}" in' \
+      '      mktemp) printf "%s\n" "${PZ_MKTEMP_OUTPUT-}" ;;' \
+      '      jq) printf "{}\n" ;;' \
+      '    esac' \
+      '    exit 0' \
+      '    ;;' \
+      'esac'
     printf '%s\n' 'exit 97'
   } >"$STUB_BIN/$tool"
   # Git Bash on Windows may not expose chmod; its filesystem layer still
@@ -159,6 +174,11 @@ for script in \
 do
   run_rejected_arg "$script absolute path" "$script" /tmp/pz-output
 done
+for script in kali-sctp-capture.sh kali-remaining-capture.sh
+do
+  run_rejected_arg "$script absolute path" "$script" /tmp/pz-output
+  run_rejected_arg "$script empty path" "$script" ''
+done
 run_rejected_dummy \
   'dummy CAPTURE absolute path' \
   /tmp/pz-dummy.pcapng \
@@ -231,7 +251,9 @@ run_rejected_dummy \
 
 mkdir -p \
   "$FIXTURE/captures/static-child-directory/status.json" \
-  "$FIXTURE/captures/real-app-child-symlink"
+  "$FIXTURE/captures/real-app-child-symlink" \
+  "$FIXTURE/captures/kali-sctp-child-symlink" \
+  "$FIXTURE/captures/kali-remaining-child-symlink"
 run_rejected_arg \
   'derived file output resolving to a directory' \
   era2-static-results.sh \
@@ -244,6 +266,14 @@ then
   run_rejected_arg \
     'directory symlink escape' \
     era2-static-results.sh \
+    captures/external-directory/nested
+  run_rejected_arg \
+    'Kali SCTP directory symlink escape' \
+    kali-sctp-capture.sh \
+    captures/external-directory/nested
+  run_rejected_arg \
+    'Kali remaining directory symlink escape' \
+    kali-remaining-capture.sh \
     captures/external-directory/nested
 else
   printf '%s\n' \
@@ -274,6 +304,34 @@ else
   printf '%s\n' \
     'SKIP: derived file symlink regression (platform cannot create symlinks)'
 fi
+if ln -s \
+     "$TMP/outside-file" \
+     "$FIXTURE/captures/kali-sctp-child-symlink/sctp.pcap" \
+     2>/dev/null && \
+   [ -L "$FIXTURE/captures/kali-sctp-child-symlink/sctp.pcap" ]
+then
+  run_rejected_arg \
+    'Kali SCTP output file symlink escape' \
+    kali-sctp-capture.sh \
+    captures/kali-sctp-child-symlink
+else
+  printf '%s\n' \
+    'SKIP: Kali SCTP file symlink regression (platform cannot create symlinks)'
+fi
+if ln -s \
+     "$TMP/outside-file" \
+     "$FIXTURE/captures/kali-remaining-child-symlink/gre.pcapng" \
+     2>/dev/null && \
+   [ -L "$FIXTURE/captures/kali-remaining-child-symlink/gre.pcapng" ]
+then
+  run_rejected_arg \
+    'Kali remaining output file symlink escape' \
+    kali-remaining-capture.sh \
+    captures/kali-remaining-child-symlink
+else
+  printf '%s\n' \
+    'SKIP: Kali remaining file symlink regression (platform cannot create symlinks)'
+fi
 
 # A normal captures/ descendant in every integration must pass the guard and
 # reach the first deliberately-stubbed side effect. No real experiment runs.
@@ -289,6 +347,11 @@ for script in \
   era2-rip-capture.sh \
   era2-static-results.sh \
   real-app-capture.sh
+do
+  name=${script%.sh}
+  run_valid_arg "$script valid path" "$script" "captures/valid-$name/output"
+done
+for script in kali-sctp-capture.sh kali-remaining-capture.sh
 do
   name=${script%.sh}
   run_valid_arg "$script valid path" "$script" "captures/valid-$name/output"
@@ -381,7 +444,6 @@ run_exact_cleanup \
   ftp.pcapng \
   telnet.frames.tsv \
   ftp.frames.tsv
-
 run_exact_file_cleanup() {
   script=$1
   relative_file=$2
