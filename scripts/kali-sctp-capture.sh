@@ -37,6 +37,48 @@ COMMITTED=false
 PUBLISHED=
 CLEANING=false
 PENDING_SIGNAL_STATUS=
+cleanup_remove() {
+  cleanup_remove_target=$2
+  cleanup_remove_pending_before=$PENDING_SIGNAL_STATUS
+  if rm "$@"; then
+    return 0
+  fi
+  if [ ! -e "$cleanup_remove_target" ] && \
+    [ ! -L "$cleanup_remove_target" ]; then
+    return 0
+  fi
+  if [ -z "$cleanup_remove_pending_before" ] && \
+    [ -n "$PENDING_SIGNAL_STATUS" ]; then
+    if rm "$@"; then
+      return 0
+    fi
+    [ ! -e "$cleanup_remove_target" ] && \
+      [ ! -L "$cleanup_remove_target" ] && return 0
+  fi
+  return 1
+}
+cleanup_move() {
+  cleanup_move_source=$1
+  cleanup_move_destination=$2
+  cleanup_move_pending_before=$PENDING_SIGNAL_STATUS
+  if mv "$cleanup_move_source" "$cleanup_move_destination"; then
+    return 0
+  fi
+  if [ ! -e "$cleanup_move_source" ] && \
+    [ -f "$cleanup_move_destination" ]; then
+    return 0
+  fi
+  if [ -z "$cleanup_move_pending_before" ] && \
+    [ -n "$PENDING_SIGNAL_STATUS" ] && \
+    [ -e "$cleanup_move_source" ]; then
+    if mv "$cleanup_move_source" "$cleanup_move_destination"; then
+      return 0
+    fi
+    [ ! -e "$cleanup_move_source" ] && \
+      [ -f "$cleanup_move_destination" ] && return 0
+  fi
+  return 1
+}
 cleanup() {
   [ "$CLEANING" != true ] || return 0
   CLEANING=true
@@ -48,12 +90,11 @@ cleanup() {
         backup=$STAGE/.previous.$name
         case " $PUBLISHED " in
           *" $name "*)
-            rm -f "$OUT_DIR/$name" || rollback_ok=false
+            cleanup_remove -f "$OUT_DIR/$name" || rollback_ok=false
             ;;
         esac
         if [ -e "$backup" ]; then
-          if ! mv "$backup" "$OUT_DIR/$name" && \
-            { [ -e "$backup" ] || [ ! -f "$OUT_DIR/$name" ]; }; then
+          if ! cleanup_move "$backup" "$OUT_DIR/$name"; then
             echo "unable to restore previous Kali SCTP artifact: $name" >&2
             rollback_ok=false
           fi
@@ -61,7 +102,7 @@ cleanup() {
       done
     fi
     if [ "$rollback_ok" = true ]; then
-      if rm -rf "$STAGE"; then
+      if cleanup_remove -rf "$STAGE"; then
         STAGE=
         PUBLISHED=
       else
