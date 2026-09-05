@@ -109,7 +109,13 @@ trap 'handle_signal 130' INT
 trap 'handle_signal 143' TERM
 
 mkdir -p "$OUT_DIR"
-STAGE=$(mktemp -d "$OUT_DIR/.kali-remaining.XXXXXX")
+# The parent trap must receive signals, but the creator must survive long
+# enough to return the pathname of any directory it creates. Otherwise a
+# signal between mkdir(2) and command-substitution output makes cleanup blind.
+STAGE=$(
+  trap '' HUP INT TERM
+  exec mktemp -d "$OUT_DIR/.kali-remaining.XXXXXX"
+)
 
 scp -q -o StrictHostKeyChecking=no -o UserKnownHostsFile=/tmp/pz-known-hosts \
   -o ConnectTimeout=8 -i "$KEYDIR/id_ed25519" \

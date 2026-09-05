@@ -61,6 +61,12 @@ EOF
 cat >"$BIN/mktemp" <<'EOF'
 #!/bin/sh
 stage=$("${PZ_REAL_MKTEMP:?}" "$@") || exit
+if [ -n "${PZ_ABORT_MKTEMP_SIGNAL-}" ]; then
+  printf '%s\n' "$stage" >"${PZ_STAGE_RECORD:?}"
+  kill -"$PZ_ABORT_MKTEMP_SIGNAL" "$PPID"
+  kill -"$PZ_ABORT_MKTEMP_SIGNAL" "$$"
+  sleep 1
+fi
 printf '%s\n' "$stage"
 if [ "${PZ_SIGNAL_MKTEMP-}" = 1 ]; then
   kill -TERM "$PPID"
@@ -239,6 +245,7 @@ run_wrapper() {
   PZ_TEST_PYTHON=$PYTHON_BIN \
   PZ_REAL_MV=$REAL_MV \
   PZ_REAL_MKTEMP=$REAL_MKTEMP \
+  PZ_STAGE_RECORD=$TMP/stage-record \
   PZ_KALI_KEYDIR=$KEYDIR \
   PZ_KALI_HOST=203.0.113.77 \
   PZ_FAIL_SSH=${PZ_FAIL_SSH-} \
@@ -246,6 +253,7 @@ run_wrapper() {
   PZ_FAIL_MV_CALL=${PZ_FAIL_MV_CALL-} \
   PZ_SIGNAL_MV_CALL=${PZ_SIGNAL_MV_CALL-} \
   PZ_SIGNAL_MKTEMP=${PZ_SIGNAL_MKTEMP-} \
+  PZ_ABORT_MKTEMP_SIGNAL=${PZ_ABORT_MKTEMP_SIGNAL-} \
   PZ_SCTP_PCAP_SHAPE=${PZ_SCTP_PCAP_SHAPE-} \
   PZ_SCTP_JSON_SHAPE=${PZ_SCTP_JSON_SHAPE-} \
   PZ_UDPLITE_SHAPE=${PZ_UDPLITE_SHAPE-} \
@@ -436,6 +444,34 @@ for script in kali-sctp-capture.sh kali-remaining-capture.sh; do
     find "$FIXTURE/$target" -mindepth 1 -maxdepth 1 >&2
     fail "$script leaked staging after TERM from mktemp"
   }
+done
+
+# A foreground signal reaches both the wrapper and mktemp. If mktemp dies after
+# creating the directory but before returning its pathname, the parent cannot
+# remove that otherwise-unreachable staging path. Delay the handoff after each
+# injected signal so this does not pass merely because the child exits first.
+for signal_and_status in HUP:129 INT:130 TERM:143; do
+  signal=${signal_and_status%:*}
+  expected_status=${signal_and_status#*:}
+  for script in kali-sctp-capture.sh kali-remaining-capture.sh; do
+    target=captures/${script%.sh}-aborted-mktemp-${signal}
+    rm -rf "$FIXTURE/${target:?}"
+    rm -f "$TMP/scp-count" "$TMP/mv-count" "$TMP/stage-record"
+    if PZ_ABORT_MKTEMP_SIGNAL=$signal run_wrapper \
+      "$FIXTURE/scripts/$script" "$target" >"$TMP/output" 2>&1; then
+      fail "$script swallowed $signal that interrupted mktemp before output"
+    else
+      actual_status=$?
+    fi
+    [ "$actual_status" -eq "$expected_status" ] || \
+      fail "$script translated $signal during mktemp to status $actual_status"
+    [ -s "$TMP/stage-record" ] || fail "$script did not reach the mktemp probe"
+    [ -d "$FIXTURE/$target" ] || fail "$script removed its output directory"
+    [ "$(find "$FIXTURE/$target" -mindepth 1 -maxdepth 1 | wc -l)" -eq 0 ] || {
+      find "$FIXTURE/$target" -mindepth 1 -maxdepth 1 >&2
+      fail "$script leaked staging when mktemp was interrupted before output"
+    }
+  done
 done
 
 # A mid-publication failure restores an older complete set, not a mixture.
